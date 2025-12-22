@@ -14,4 +14,7 @@ interface PartnerInviteDao {
 
     @Query("UPDATE partner_invites SET accepted = 1 WHERE inviteId = :id")
     suspend fun markAccepted(id: String)
+
+    @Query("SELECT * FROM partner_invites WHERE inviteId = :id LIMIT 1")
+    suspend fun getInviteById(id: String): PartnerInvite?
 }

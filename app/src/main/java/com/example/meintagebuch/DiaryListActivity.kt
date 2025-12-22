@@ -68,7 +68,7 @@ class DiaryListActivity : AppCompatActivity() {
                 val text = editText.text.toString()
                 if (text.isNotBlank()) {
                     lifecycleScope.launch {
-                        database.diaryDao().insert(DiaryEntry(text = text))
+                        database.diaryDao().insert(DiaryEntry(text = text, authorId = "ME"))
                     }
                 }
             }

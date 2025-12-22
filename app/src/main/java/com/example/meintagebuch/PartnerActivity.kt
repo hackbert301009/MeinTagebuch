@@ -26,9 +26,9 @@ class PartnerActivity : AppCompatActivity() {
         db.partnerInviteDao().getAllInvites().observe(this, Observer { invites ->
             textView.text = invites.joinToString("\n") {
                 if (it.accepted)
-                    "✅ ${it.inviteId}"
+                    "✅ ${it.partnerName}"
                 else
-                    "⏳ ${it.inviteId}"
+                    "⏳ ${it.partnerName}"
             }
         })
     }

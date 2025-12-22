@@ -16,6 +16,8 @@ class DiaryAdapter : RecyclerView.Adapter<DiaryAdapter.DiaryViewHolder>() {
     class DiaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: TextView = itemView.findViewById(R.id.entryText)
         val dateView: TextView = itemView.findViewById(R.id.entryDate)
+        val authorView: TextView = itemView.findViewById(R.id.entryAuthor)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiaryViewHolder {
@@ -28,6 +30,18 @@ class DiaryAdapter : RecyclerView.Adapter<DiaryAdapter.DiaryViewHolder>() {
         val entry = entries[position]
         holder.textView.text = entry.text
         holder.dateView.text = dateFormat.format(Date(entry.timestamp))
+        if (entry.authorId == "ME") {
+            holder.authorView.text = "Du 💖"
+            holder.authorView.setTextColor(
+                holder.itemView.context.getColor(R.color.primary)
+            )
+        } else {
+            holder.authorView.text = "Partner 💑"
+            holder.authorView.setTextColor(
+                holder.itemView.context.getColor(R.color.accent)
+            )
+        }
+
     }
 
     override fun getItemCount() = entries.size

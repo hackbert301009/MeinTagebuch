@@ -129,12 +129,16 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
                         android:text="Statistiken"
                         android:textColor="@color/primary_text"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_marginTop="4dp"
                         android:text="Siehe alle Tage im Überblick"
                         android:textColor="@color/secondary_text"
@@ -142,6 +146,8 @@
                 </LinearLayout>
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:text="›"
                     android:textSize="32sp"
                     android:textColor="@color/secondary_text"/>
@@ -183,12 +189,16 @@
                     android:layout_marginStart="16dp">
 
                     <TextView
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
                         android:text="Tagebuch"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="@color/primary_text"/>
 
                     <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:text="Alle Einträge ansehen"
                         android:textSize="14sp"
                         android:textColor="@color/secondary_text"
@@ -196,6 +206,8 @@
                 </LinearLayout>
 
                 <TextView
+                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
                     android:text="›"
                     android:textSize="32sp"
                     android:textColor="@color/secondary_text"/>
@@ -237,12 +249,16 @@
                     android:layout_marginStart="16dp">
 
                     <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:text="Foto-Galerie"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="@color/primary_text"/>
 
                     <TextView
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
                         android:text="Erinnerungen festhalten"
                         android:textSize="14sp"
                         android:textColor="@color/secondary_text"
@@ -250,6 +266,8 @@
                 </LinearLayout>
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="›"
                     android:textSize="32sp"
                     android:textColor="@color/secondary_text"/>
@@ -291,12 +309,16 @@
                     android:layout_marginStart="16dp">
 
                     <TextView
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
                         android:text="Partner"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="@color/primary_text"/>
 
                     <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:text="Gemeinsam schreiben"
                         android:textSize="14sp"
                         android:textColor="@color/secondary_text"
@@ -304,6 +326,8 @@
                 </LinearLayout>
 
                 <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
                     android:text="›"
                     android:textSize="32sp"
                     android:textColor="@color/secondary_text"/>

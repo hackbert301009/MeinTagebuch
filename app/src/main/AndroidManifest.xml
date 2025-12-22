@@ -27,6 +27,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Partner Activity -->
+        <activity
+            android:name=".PartnerActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <!-- Invite Accept Activity -->
         <activity android:name=".InviteAcceptActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -66,5 +74,6 @@
         </provider>
 
     </application>
+
 
 </manifest>

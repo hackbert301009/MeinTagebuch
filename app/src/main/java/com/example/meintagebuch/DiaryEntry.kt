@@ -8,7 +8,6 @@ data class DiaryEntry(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val text: String,
-    val timestamp: Long = System.currentTimeMillis(),
-    val ownerId: String = "me"
-
+    val authorId: String,          // 👈 NEU
+    val timestamp: Long = System.currentTimeMillis()
 )

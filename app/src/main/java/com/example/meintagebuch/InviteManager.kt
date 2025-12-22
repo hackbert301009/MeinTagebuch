@@ -11,6 +11,7 @@ object InviteManager {
     fun createInviteLink(context: Context): String {
         val inviteId = UUID.randomUUID().toString()
 
+        // Einfach Link generieren – keine Rekursion!
         val link = "meintagebuch://invite?code=$inviteId"
 
         CoroutineScope(Dispatchers.IO).launch {
