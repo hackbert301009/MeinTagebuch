@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Schöne, sanfte Farbpalette -->
+    <color name="primary">#E91E63</color>
+    <color name="primary_dark">#C2185B</color>
+    <color name="accent">#FF80AB</color>
+
+    <color name="background">#FFF0F5</color>
+    <color name="card_background">#FFFFFF</color>
+
+    <color name="primary_text">#37474F</color>
+    <color name="secondary_text">#78909C</color>
+    <color name="date_text">#B0BEC5</color>
+
+    <!-- Standard Android Farben -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

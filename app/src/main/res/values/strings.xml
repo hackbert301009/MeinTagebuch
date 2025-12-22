@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mein Herz-Tagebuch</string>
+    <string name="thought_button">💖 Ich denke an dich</string>
+    <string name="today_count">Heute: %d Mal an dich gedacht ❤️</string>
+    <string name="my_thoughts">📝 Meine Gedanken</string>
+    <string name="new_entry">Neuer Tagebuch-Eintrag</string>
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="entry_hint">Schreibe hier deine Gedanken...</string>
+    <string name="statistics">Statistiken</string>
+    <string name="diary">Tagebuch</string>
+    <string name="photo_gallery">Foto-Galerie</string>
+</resources>
