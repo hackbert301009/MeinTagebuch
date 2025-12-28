@@ -9,6 +9,19 @@
     <string name="settings_language_english">🇬🇧 English</string>
     <string name="settings_restart_info">Die App wird nach der Sprachänderung neu gestartet.</string>
 
+    <!-- Rating -->
+    <string name="settings_rate_title">App bewerten</string>
+    <string name="settings_rate_subtitle">Teile uns deine Meinung mit</string>
+    <string name="rating_dialog_title">Wie gefällt dir die App?</string>
+    <string name="rating_message">Deine Bewertung hilft uns, die App zu verbessern!</string>
+    <string name="rating_save">Speichern</string>
+    <string name="rating_none">Keine Bewertung</string>
+    <string name="rating_bad">😔 Gefällt mir nicht</string>
+    <string name="rating_okay">😐 Okay</string>
+    <string name="rating_good">😊 Gut</string>
+    <string name="rating_excellent">🥰 Ausgezeichnet!</string>
+    <string name="rating_thanks">Vielen Dank für deine Bewertung! ❤️</string>
+
     <!-- Main Activity -->
     <string name="main_title">💕 Mein Love-Tagebuch</string>
     <string name="total_thoughts">Insgesamt: %d Gedanken</string>
@@ -32,6 +45,8 @@
     <string name="partner_description">Gemeinsam euer Tagebuch führen</string>
     <string name="partner_status_header">💕 Euer Status 💕</string>
     <string name="partner_status_none">Noch kein Partner verbunden</string>
+    <string name="partner_status_connected">Verbunden mit: %s</string>
+    <string name="partner_pending">Ausstehend</string>
     <string name="partner_invite_header">🔗 Einladung</string>
     <string name="partner_invite_button">💌 Partner einladen</string>
     <string name="partner_invites_header">📋 Einladungen</string>
@@ -46,4 +61,10 @@
     <string name="invite_accept_button">Annehmen</string>
     <string name="invite_cancel_button">Abbrechen</string>
     <string name="invite_default_name">Partner</string>
+    <string name="invite_invalid">Ungültige Einladung</string>
+    <string name="invite_accepted">Einladung angenommen! 💕</string>
+
+    <!-- Diary -->
+    <string name="diary_author_me">Ich</string>
+    <string name="diary_author_partner">Partner</string>
 </resources>

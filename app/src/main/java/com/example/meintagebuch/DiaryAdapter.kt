@@ -10,14 +10,12 @@ import java.util.*
 
 class DiaryAdapter : RecyclerView.Adapter<DiaryAdapter.DiaryViewHolder>() {
 
-    private var entries = emptyList<DiaryEntry>()
-    private val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.GERMAN)
+    private var entries = listOf<DiaryEntry>()
+    private val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
 
-    class DiaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textView: TextView = itemView.findViewById(R.id.entryText)
-        val dateView: TextView = itemView.findViewById(R.id.entryDate)
-        val authorView: TextView = itemView.findViewById(R.id.entryAuthor)
-
+    fun setEntries(newEntries: List<DiaryEntry>) {
+        entries = newEntries
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiaryViewHolder {
@@ -28,26 +26,26 @@ class DiaryAdapter : RecyclerView.Adapter<DiaryAdapter.DiaryViewHolder>() {
 
     override fun onBindViewHolder(holder: DiaryViewHolder, position: Int) {
         val entry = entries[position]
-        holder.textView.text = entry.text
-        holder.dateView.text = dateFormat.format(Date(entry.timestamp))
-        if (entry.authorId == "ME") {
-            holder.authorView.text = "Du 💖"
-            holder.authorView.setTextColor(
-                holder.itemView.context.getColor(R.color.primary)
-            )
-        } else {
-            holder.authorView.text = "Partner 💑"
-            holder.authorView.setTextColor(
-                holder.itemView.context.getColor(R.color.accent)
-            )
-        }
-
+        holder.bind(entry)
     }
 
     override fun getItemCount() = entries.size
 
-    fun setEntries(entries: List<DiaryEntry>) {
-        this.entries = entries
-        notifyDataSetChanged()
+    inner class DiaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val textView: TextView = itemView.findViewById(R.id.entryText)
+        private val dateView: TextView = itemView.findViewById(R.id.entryDate)
+        private val authorView: TextView = itemView.findViewById(R.id.entryAuthor)
+
+        fun bind(entry: DiaryEntry) {
+            textView.text = entry.text
+            dateView.text = dateFormat.format(Date(entry.timestamp))
+
+            // Autor anzeigen
+            authorView.text = when (entry.authorId) {
+                "ME" -> "📝 ${itemView.context.getString(R.string.diary_author_me)}"
+                else -> "💑 ${entry.authorId}"
+            }
+            authorView.visibility = View.VISIBLE
+        }
     }
 }
