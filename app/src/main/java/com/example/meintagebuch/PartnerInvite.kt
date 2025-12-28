@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class PartnerInvite(
     @PrimaryKey val inviteId: String,
     val partnerName: String,
-    val accepted: Boolean = false
+    val accepted: Boolean
 )

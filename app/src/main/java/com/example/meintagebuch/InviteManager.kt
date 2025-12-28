@@ -11,14 +11,18 @@ object InviteManager {
     fun createInviteLink(context: Context): String {
         val inviteId = UUID.randomUUID().toString()
 
-        // Einfach Link generieren – keine Rekursion!
-        val link = "meintagebuch://invite?code=$inviteId"
+        // HTTPS Link mit deiner Domain
+        val link = "https://app.hackbert.org/invite?code=$inviteId"
 
         CoroutineScope(Dispatchers.IO).launch {
             AppDatabase.getDatabase(context)
                 .partnerInviteDao()
                 .insert(
-                    PartnerInvite(inviteId, partnerName = "Unknown", accepted = false)
+                    PartnerInvite(
+                        inviteId = inviteId,
+                        partnerName = "Unknown",
+                        accepted = false
+                    )
                 )
         }
 

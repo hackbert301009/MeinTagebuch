@@ -9,6 +9,10 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.launch
 import java.util.*
+import android.content.Context
+import android.content.res.Configuration
+import android.widget.ImageView
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,7 +22,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // WICHTIG: Sprache VOR setContentView laden
+        loadLanguagePreference()
+
         setContentView(R.layout.activity_main)
+
+        // Settings Button
+        val settingsButton: ImageView = findViewById(R.id.settingsButton)
+        settingsButton.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
 
         database = AppDatabase.getDatabase(this)
 
@@ -76,13 +90,15 @@ class MainActivity : AppCompatActivity() {
 
         database.thoughtDao().getThoughtsCountForDay(startOfDay, endOfDay)
             .observe(this) { count ->
-                thoughtCountText.text = "$count Mal"
+                // String-Ressource verwenden für Übersetzung
+                thoughtCountText.text = getString(R.string.thought_count, count)
             }
     }
 
     private fun observeTotalThoughts() {
         database.thoughtDao().getAllThoughts().observe(this) { thoughts ->
-            totalThoughtsText.text = "Insgesamt: ${thoughts.size} Gedanken"
+            // String-Ressource verwenden für Übersetzung
+            totalThoughtsText.text = getString(R.string.total_thoughts, thoughts.size)
         }
     }
 
@@ -90,5 +106,17 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         observeTodayThoughts()
         observeTotalThoughts()
+    }
+
+    private fun loadLanguagePreference() {
+        val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val lang = prefs.getString("language", "de") ?: "de"
+
+        val locale = Locale(lang)
+        Locale.setDefault(locale)
+
+        val config = Configuration(resources.configuration)
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
     }
 }

@@ -1,14 +1,49 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Mein Herz-Tagebuch</string>
+    <!-- App Name -->
+    <string name="app_name">Mein Love-Tagebuch</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_language_label">🌍 Sprache / Language</string>
+    <string name="settings_language_german">🇩🇪 Deutsch</string>
+    <string name="settings_language_english">🇬🇧 English</string>
+    <string name="settings_restart_info">Die App wird nach der Sprachänderung neu gestartet.</string>
+
+    <!-- Main Activity -->
+    <string name="main_title">💕 Mein Love-Tagebuch</string>
+    <string name="total_thoughts">Insgesamt: %d Gedanken</string>
+    <string name="thought_card_title">✨ Heute an dich gedacht ✨</string>
+    <string name="thought_count">%d Mal</string>
     <string name="thought_button">💖 Ich denke an dich</string>
-    <string name="today_count">Heute: %d Mal an dich gedacht ❤️</string>
-    <string name="my_thoughts">📝 Meine Gedanken</string>
-    <string name="new_entry">Neuer Tagebuch-Eintrag</string>
-    <string name="save">Speichern</string>
-    <string name="cancel">Abbrechen</string>
-    <string name="entry_hint">Schreibe hier deine Gedanken...</string>
-    <string name="statistics">Statistiken</string>
-    <string name="diary">Tagebuch</string>
-    <string name="photo_gallery">Foto-Galerie</string>
+    <string name="sections_title">📂 Bereiche</string>
+
+    <!-- Cards -->
+    <string name="statistics_title">Statistiken</string>
+    <string name="statistics_subtitle">Siehe alle Tage im Überblick</string>
+    <string name="diary_title">Tagebuch</string>
+    <string name="diary_subtitle">Alle Einträge ansehen</string>
+    <string name="photos_title">Foto-Galerie</string>
+    <string name="photos_subtitle">Erinnerungen festhalten</string>
+    <string name="partner_title">Partner</string>
+    <string name="partner_subtitle">Gemeinsam schreiben</string>
+
+    <!-- Partner Activity -->
+    <string name="partner_header">👑 Partner</string>
+    <string name="partner_description">Gemeinsam euer Tagebuch führen</string>
+    <string name="partner_status_header">💕 Euer Status 💕</string>
+    <string name="partner_status_none">Noch kein Partner verbunden</string>
+    <string name="partner_invite_header">🔗 Einladung</string>
+    <string name="partner_invite_button">💌 Partner einladen</string>
+    <string name="partner_invites_header">📋 Einladungen</string>
+    <string name="partner_invites_empty">Noch keine Einladungen</string>
+    <string name="partner_invite_share">Tagebuch-Einladung: %s</string>
+    <string name="partner_invite_share_title">Einladung teilen</string>
+
+    <!-- Invite Accept -->
+    <string name="invite_accept_title">Einladung annehmen</string>
+    <string name="invite_accept_message">Wie soll dein Name angezeigt werden?</string>
+    <string name="invite_accept_hint">Dein Name</string>
+    <string name="invite_accept_button">Annehmen</string>
+    <string name="invite_cancel_button">Abbrechen</string>
+    <string name="invite_default_name">Partner</string>
 </resources>

@@ -1,8 +1,8 @@
 package com.example.meintagebuch
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+
 import androidx.lifecycle.LiveData
 import androidx.room.*
+
 @Dao
 interface PartnerInviteDao {
 
@@ -12,9 +12,13 @@ interface PartnerInviteDao {
     @Query("SELECT * FROM partner_invites")
     fun getAllInvites(): LiveData<List<PartnerInvite>>
 
-    @Query("UPDATE partner_invites SET accepted = 1 WHERE inviteId = :id")
-    suspend fun markAccepted(id: String)
+    @Query("SELECT * FROM partner_invites WHERE inviteId = :inviteId LIMIT 1")
+    suspend fun getInviteById(inviteId: String): PartnerInvite?
 
-    @Query("SELECT * FROM partner_invites WHERE inviteId = :id LIMIT 1")
-    suspend fun getInviteById(id: String): PartnerInvite?
+    @Query("""
+        UPDATE partner_invites 
+        SET partnerName = :name, accepted = 1 
+        WHERE inviteId = :inviteId
+    """)
+    suspend fun updateNameAndAccept(inviteId: String, name: String)
 }
