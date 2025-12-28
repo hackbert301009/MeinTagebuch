@@ -26,7 +26,7 @@
                 android:id="@+id/mainTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
+                android:text="@string/main_title"
                 android:textColor="@color/primary"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -75,7 +75,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="✨ Heute an dich gedacht ✨"
+                    android:text="@string/thought_card_title"
                     android:textSize="20sp"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
@@ -85,7 +85,7 @@
                     android:id="@+id/thoughtCountText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0 Mal"
+                    android:text="@string/thought_count"
                     android:textSize="48sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/white"
@@ -95,7 +95,7 @@
                     android:id="@+id/thoughtButton"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    android:text="💖 Ich denke an dich"
+                    android:text="@string/thought_button"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:backgroundTint="@android:color/white"
@@ -109,7 +109,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="📂 Bereiche"
+            android:text="@string/sections_title"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/primary_text"
@@ -152,7 +152,7 @@
                     <TextView
                         android:layout_height="match_parent"
                         android:layout_width="match_parent"
-                        android:text="Statistiken"
+                        android:text="@string/statistics_title"
                         android:textColor="@color/primary_text"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -161,7 +161,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginTop="4dp"
-                        android:text="Siehe alle Tage im Überblick"
+                        android:text="@string/statistics_subtitle"
                         android:textColor="@color/secondary_text"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -212,7 +212,7 @@
                     <TextView
                         android:layout_height="match_parent"
                         android:layout_width="match_parent"
-                        android:text="Tagebuch"
+                        android:text="@string/diary_title"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="@color/primary_text"/>
@@ -220,7 +220,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Alle Einträge ansehen"
+                        android:text="@string/diary_subtitle"
                         android:textSize="14sp"
                         android:textColor="@color/secondary_text"
                         android:layout_marginTop="4dp"/>
@@ -272,7 +272,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Foto-Galerie"
+                        android:text="@string/photos_title"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="@color/primary_text"/>
@@ -280,7 +280,7 @@
                     <TextView
                         android:layout_height="match_parent"
                         android:layout_width="match_parent"
-                        android:text="Erinnerungen festhalten"
+                        android:text="@string/photos_subtitle"
                         android:textSize="14sp"
                         android:textColor="@color/secondary_text"
                         android:layout_marginTop="4dp"/>
@@ -332,7 +332,7 @@
                     <TextView
                         android:layout_height="match_parent"
                         android:layout_width="match_parent"
-                        android:text="Partner"
+                        android:text="@string/partner_title"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="@color/primary_text"/>
@@ -340,7 +340,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Gemeinsam schreiben"
+                        android:text="@string/partner_subtitle"
                         android:textSize="14sp"
                         android:textColor="@color/secondary_text"
                         android:layout_marginTop="4dp"/>

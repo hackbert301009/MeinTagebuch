@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="💑 Partner"
+            android:text="@string/partner_header"
             android:textSize="32sp"
             android:textStyle="bold"
             android:textColor="@color/primary"
@@ -27,7 +27,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gemeinsam euer Tagebuch führen"
+            android:text="@string/partner_description"
             android:textSize="14sp"
             android:textColor="@color/secondary_text"
             android:layout_gravity="center"
@@ -52,7 +52,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="💕 Euer Status 💕"
+                    android:text="@string/partner_status_header"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/white"
@@ -62,7 +62,7 @@
                     android:id="@+id/partnerStatusText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Noch kein Partner verbunden"
+                    android:text="@string/partner_status_none"
                     android:textSize="16sp"
                     android:textColor="@android:color/white"/>
             </LinearLayout>
@@ -86,7 +86,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🔗 Einladung"
+                    android:text="@string/partner_invite_header"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="@color/primary_text"
@@ -96,7 +96,7 @@
                     android:id="@+id/inviteButton"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:text="💌 Partner einladen"
+                    android:text="@string/partner_invite_button"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:backgroundTint="@color/primary"
@@ -109,7 +109,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="📋 Einladungen"
+            android:text="@string/partner_invites_header"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/primary_text"
@@ -119,7 +119,7 @@
             android:id="@+id/inviteListText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Noch keine Einladungen"
+            android:text="@string/partner_invites_empty"
             android:textSize="14sp"
             android:textColor="@color/secondary_text"/>
     </LinearLayout>
