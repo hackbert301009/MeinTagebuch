@@ -67,4 +67,7 @@
     <!-- Diary -->
     <string name="diary_author_me">Ich</string>
     <string name="diary_author_partner">Partner</string>
+    <string name="section_hilfe">Hilfe</string>
+    <string name="section_ueber_mich">Über mich</string>
+
 </resources>

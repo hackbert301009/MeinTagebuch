@@ -14,16 +14,21 @@ object InviteManager {
         // HTTPS Link mit deiner Domain
         val link = "https://app.hackbert.org/invite?code=$inviteId"
 
+        // Sowohl in lokaler Datenbank als auch in Firebase speichern
         CoroutineScope(Dispatchers.IO).launch {
+            val invite = PartnerInvite(
+                inviteId = inviteId,
+                partnerName = "Unknown",
+                accepted = false
+            )
+
+            // Lokal speichern
             AppDatabase.getDatabase(context)
                 .partnerInviteDao()
-                .insert(
-                    PartnerInvite(
-                        inviteId = inviteId,
-                        partnerName = "Unknown",
-                        accepted = false
-                    )
-                )
+                .insert(invite)
+
+            // In Firebase speichern
+            FirebaseManager.createInvite(invite)
         }
 
         return link

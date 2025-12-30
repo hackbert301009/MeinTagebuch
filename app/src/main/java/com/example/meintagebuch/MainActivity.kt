@@ -23,12 +23,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // WICHTIG: Sprache VOR setContentView laden
         loadLanguagePreference()
-
         setContentView(R.layout.activity_main)
 
-        // Settings Button
         val settingsButton: ImageView = findViewById(R.id.settingsButton)
         settingsButton.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
@@ -36,7 +33,6 @@ class MainActivity : AppCompatActivity() {
 
         database = AppDatabase.getDatabase(this)
 
-        // UI Elemente
         val thoughtButton: Button = findViewById(R.id.thoughtButton)
         thoughtCountText = findViewById(R.id.thoughtCountText)
         totalThoughtsText = findViewById(R.id.totalThoughtsText)
@@ -46,20 +42,19 @@ class MainActivity : AppCompatActivity() {
         val photosCard: MaterialCardView = findViewById(R.id.photosCard)
         val partnerCard: MaterialCardView = findViewById(R.id.partnerCard)
 
-        // Gedanken-Button
+        // 🆕 NEU
+        val hilfeCard: MaterialCardView = findViewById(R.id.hilfeCard)
+        val ueberMichCard: MaterialCardView = findViewById(R.id.ueberMichCard)
+
         thoughtButton.setOnClickListener {
             lifecycleScope.launch {
                 database.thoughtDao().insert(ThoughtEntry())
             }
         }
 
-        // Beobachte Gedanken für heute
         observeTodayThoughts()
-
-        // Beobachte Gesamt-Gedanken
         observeTotalThoughts()
 
-        // Navigation zu anderen Screens
         statisticsCard.setOnClickListener {
             startActivity(Intent(this, StatisticsActivity::class.java))
         }
@@ -74,6 +69,15 @@ class MainActivity : AppCompatActivity() {
 
         partnerCard.setOnClickListener {
             startActivity(Intent(this, PartnerActivity::class.java))
+        }
+
+        // 🆕 Navigation
+        hilfeCard.setOnClickListener {
+            startActivity(Intent(this, HilfeActivity::class.java))
+        }
+
+        ueberMichCard.setOnClickListener {
+            startActivity(Intent(this, UeberMichActivity::class.java))
         }
     }
 

@@ -7,10 +7,12 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
-    <!-- Internet Permission für Deep Links -->
+    <!-- Internet Permission für Firebase -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -54,7 +56,7 @@
                     android:pathPrefix="/invite"/>
             </intent-filter>
 
-            <!-- HTTP als Fallback (falls HTTPS nicht funktioniert) -->
+            <!-- HTTP als Fallback -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -99,6 +101,14 @@
             android:name=".PhotoGalleryActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
+
+        <activity
+        android:name=".HilfeActivity"
+        android:exported="false"/>
+
+        <activity
+            android:name=".UeberMichActivity"
+            android:exported="false"/>
 
         <!-- FileProvider für Fotos -->
         <provider
