@@ -3,6 +3,7 @@ package com.example.meintagebuch
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.TextView
@@ -16,10 +17,11 @@ import kotlinx.coroutines.launch
 
 class DiaryListActivity : AppCompatActivity() {
 
+    private val TAG = "DiaryListActivity"
     private lateinit var database: AppDatabase
     private lateinit var adapter: DiaryAdapter
     private lateinit var emptyText: TextView
-    private val partnerId = "shared_partner_id"  // Gemeinsame Partner-ID
+    private val partnerId = "shared_partner_id"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,20 +46,22 @@ class DiaryListActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Firebase-Einträge beobachten und mit lokaler DB synchronisieren
+        // Firebase-Einträge beobachten (OHNE automatisches Sync zur lokalen DB)
+        // Wir zeigen nur die lokalen Einträge an
         lifecycleScope.launch {
-            FirebaseManager.observeDiaryEntries(partnerId).collect { firebaseEntries ->
-                // Firebase-Daten in lokale DB synchronisieren
-                firebaseEntries.forEach { entry ->
-                    // Prüfen ob Eintrag bereits lokal existiert (vereinfacht)
-                    // In echter App würde man eine eindeutige ID verwenden
-                    database.diaryDao().insert(entry)
+            try {
+                FirebaseManager.observeDiaryEntries(partnerId).collect { firebaseEntries ->
+                    Log.d(TAG, "Received ${firebaseEntries.size} entries from Firebase")
+                    // Hier könnten wir später eine intelligente Sync-Logik einbauen
                 }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error observing Firebase entries", e)
             }
         }
 
         // Lokale Tagebuch-Einträge beobachten
         database.diaryDao().getAllEntries().observe(this) { entries ->
+            Log.d(TAG, "Local entries: ${entries.size}")
             if (entries.isEmpty()) {
                 emptyText.visibility = TextView.VISIBLE
             } else {
@@ -82,17 +86,25 @@ class DiaryListActivity : AppCompatActivity() {
                 val text = editText.text.toString()
                 if (text.isNotBlank()) {
                     lifecycleScope.launch {
-                        val authorName = getAuthorName()
-                        val entry = DiaryEntry(
-                            text = text,
-                            authorId = authorName
-                        )
+                        try {
+                            val authorName = getAuthorName()
+                            val entry = DiaryEntry(
+                                text = text,
+                                authorId = authorName
+                            )
 
-                        // Lokal speichern
-                        database.diaryDao().insert(entry)
+                            Log.d(TAG, "Saving diary entry locally")
+                            // Lokal speichern
+                            database.diaryDao().insert(entry)
 
-                        // In Firebase speichern
-                        FirebaseManager.saveDiaryEntry(partnerId, entry)
+                            Log.d(TAG, "Saving diary entry to Firebase")
+                            // In Firebase speichern
+                            FirebaseManager.saveDiaryEntry(partnerId, entry)
+
+                            Log.d(TAG, "✅ Entry saved successfully")
+                        } catch (e: Exception) {
+                            Log.e(TAG, "❌ Error saving entry", e)
+                        }
                     }
                 }
             }

@@ -56,11 +56,12 @@ class PartnerActivity : AppCompatActivity() {
                                 db.partnerInviteDao().insert(invite)
                             } else if (localInvite.accepted != invite.accepted ||
                                        localInvite.partnerName != invite.partnerName) {
-                                // Einladung aktualisieren
-                                Log.d(TAG, "Updating invite: ${invite.inviteId}")
+                                // Einladung aktualisieren - KORRIGIERT!
+                                Log.d(TAG, "Updating invite: ${invite.inviteId} with name: ${invite.partnerName}, accepted: ${invite.accepted}")
                                 db.partnerInviteDao().updateNameAndAccept(
                                     invite.inviteId,
-                                    invite.partnerName
+                                    invite.partnerName,
+                                    invite.accepted  // WICHTIG: accepted-Status auch übergeben!
                                 )
                             }
                         } catch (e: Exception) {

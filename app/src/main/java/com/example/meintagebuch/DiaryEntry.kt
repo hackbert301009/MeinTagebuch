@@ -7,7 +7,9 @@ import androidx.room.PrimaryKey
 data class DiaryEntry(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val text: String,
-    val authorId: String,          // 👈 NEU
+    val text: String = "",
+    val authorId: String = "ME",
     val timestamp: Long = System.currentTimeMillis()
-)
+) {
+    // No-Arg Constructor für Firebase (wird automatisch generiert durch data class mit Defaults)
+}

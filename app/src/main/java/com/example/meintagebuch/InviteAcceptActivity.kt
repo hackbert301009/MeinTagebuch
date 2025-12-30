@@ -52,14 +52,12 @@ class InviteAcceptActivity : AppCompatActivity() {
     }
 
     private fun acceptInvite(inviteId: String, name: String) {
-        // Zeige einen Loading-Toast
         Toast.makeText(this, "Einladung wird angenommen...", Toast.LENGTH_SHORT).show()
 
         lifecycleScope.launch {
             try {
                 Log.d(TAG, "Trying to get invite from Firebase: $inviteId")
 
-                // Einladung aus Firebase holen
                 val firebaseInvite = FirebaseManager.getInvite(inviteId)
                 Log.d(TAG, "Firebase invite: $firebaseInvite")
 
@@ -74,7 +72,7 @@ class InviteAcceptActivity : AppCompatActivity() {
 
                     if (localInvite != null) {
                         Log.d(TAG, "Updating local invite")
-                        db.partnerInviteDao().updateNameAndAccept(inviteId, name)
+                        db.partnerInviteDao().updateNameAndAccept(inviteId, name, true)
                     } else {
                         Log.d(TAG, "Inserting new local invite")
                         db.partnerInviteDao().insert(
@@ -92,19 +90,12 @@ class InviteAcceptActivity : AppCompatActivity() {
                         Toast.LENGTH_LONG
                     ).show()
 
-                    // Zur MainActivity navigieren
                     val intent = Intent(this@InviteAcceptActivity, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
                 } else {
-                    Log.e(TAG, "Firebase invite is null!")
-                    Toast.makeText(
-                        this@InviteAcceptActivity,
-                        "Einladung nicht in Firebase gefunden. Erstelle neue Einladung...",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Log.e(TAG, "Firebase invite is null - creating new one")
 
-                    // Wenn Einladung nicht existiert, erstelle sie
                     val newInvite = PartnerInvite(
                         inviteId = inviteId,
                         partnerName = name,
@@ -124,7 +115,6 @@ class InviteAcceptActivity : AppCompatActivity() {
                         Toast.LENGTH_LONG
                     ).show()
 
-                    // Zur MainActivity navigieren
                     val intent = Intent(this@InviteAcceptActivity, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
