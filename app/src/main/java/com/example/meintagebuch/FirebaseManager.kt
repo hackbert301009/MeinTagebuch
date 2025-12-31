@@ -10,18 +10,14 @@ import kotlinx.coroutines.tasks.await
 object FirebaseManager {
 
     private const val TAG = "FirebaseManager"
-
-    // WICHTIG: Ersetze diese URL mit deiner echten Firebase Database URL!
     private const val DATABASE_URL = "https://my-love-9c55d-default-rtdb.europe-west1.firebasedatabase.app"
 
     private val database: DatabaseReference by lazy {
         try {
-            // Versuche mit spezifischer URL zu initialisieren
             val db = FirebaseDatabase.getInstance(DATABASE_URL).reference
-            Log.d(TAG, "Firebase Database initialized with URL: $DATABASE_URL")
+            Log.d(TAG, "✅ Firebase Database initialized with URL: $DATABASE_URL")
             db
         } catch (e: Exception) {
-            // Fallback zur Standard-Instance
             Log.w(TAG, "Using default Firebase instance", e)
             FirebaseDatabase.getInstance().reference
         }
@@ -35,7 +31,7 @@ object FirebaseManager {
         try {
             Log.d(TAG, "Creating invite: ${invite.inviteId}")
             database.child("invites").child(invite.inviteId).setValue(invite).await()
-            Log.d(TAG, "✅ Invite created successfully in Firebase")
+            Log.d(TAG, "✅ Invite created successfully")
         } catch (e: Exception) {
             Log.e(TAG, "❌ Error creating invite", e)
             throw e
@@ -44,11 +40,9 @@ object FirebaseManager {
 
     suspend fun getInvite(inviteId: String): PartnerInvite? {
         return try {
-            Log.d(TAG, "Getting invite: $inviteId from Firebase")
+            Log.d(TAG, "Getting invite: $inviteId")
             val snapshot = database.child("invites").child(inviteId).get().await()
-            val invite = snapshot.getValue(PartnerInvite::class.java)
-            Log.d(TAG, "Invite retrieved: $invite")
-            invite
+            snapshot.getValue(PartnerInvite::class.java)
         } catch (e: Exception) {
             Log.e(TAG, "Error getting invite", e)
             null
@@ -57,13 +51,13 @@ object FirebaseManager {
 
     suspend fun updateInvite(inviteId: String, name: String, accepted: Boolean) {
         try {
-            Log.d(TAG, "Updating invite: $inviteId with name: $name")
+            Log.d(TAG, "Updating invite: $inviteId")
             val updates = mapOf(
                 "partnerName" to name,
                 "accepted" to accepted
             )
             database.child("invites").child(inviteId).updateChildren(updates).await()
-            Log.d(TAG, "✅ Invite updated successfully in Firebase")
+            Log.d(TAG, "✅ Invite updated successfully")
         } catch (e: Exception) {
             Log.e(TAG, "❌ Error updating invite", e)
             throw e
@@ -71,7 +65,7 @@ object FirebaseManager {
     }
 
     fun observeInvites(): Flow<List<PartnerInvite>> = callbackFlow {
-        Log.d(TAG, "Starting to observe invites from Firebase")
+        Log.d(TAG, "Starting to observe invites")
 
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -79,10 +73,9 @@ object FirebaseManager {
                 for (child in snapshot.children) {
                     child.getValue(PartnerInvite::class.java)?.let {
                         invites.add(it)
-                        Log.d(TAG, "Invite observed: $it")
                     }
                 }
-                Log.d(TAG, "Total invites observed: ${invites.size}")
+                Log.d(TAG, "📥 Invites observed: ${invites.size}")
                 trySend(invites)
             }
 
@@ -95,7 +88,6 @@ object FirebaseManager {
         database.child("invites").addValueEventListener(listener)
 
         awaitClose {
-            Log.d(TAG, "Stopping invite observation")
             database.child("invites").removeEventListener(listener)
         }
     }
@@ -106,10 +98,14 @@ object FirebaseManager {
 
     suspend fun saveDiaryEntry(partnerId: String, entry: DiaryEntry) {
         try {
-            val entryId = database.child("diary_entries").child(partnerId).push().key ?: return
-            Log.d(TAG, "Saving diary entry: $entryId")
-            database.child("diary_entries").child(partnerId).child(entryId).setValue(entry).await()
-            Log.d(TAG, "✅ Diary entry saved successfully")
+            Log.d(TAG, "💾 Saving diary entry: ${entry.id}")
+            // Verwende die Entry-ID als Key in Firebase
+            database.child("diary_entries")
+                .child(partnerId)
+                .child(entry.id)
+                .setValue(entry)
+                .await()
+            Log.d(TAG, "✅ Diary entry saved: ${entry.id}")
         } catch (e: Exception) {
             Log.e(TAG, "❌ Error saving diary entry", e)
             throw e
@@ -123,10 +119,16 @@ object FirebaseManager {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val entries = mutableListOf<DiaryEntry>()
                 for (child in snapshot.children) {
-                    child.getValue(DiaryEntry::class.java)?.let { entries.add(it) }
+                    try {
+                        child.getValue(DiaryEntry::class.java)?.let { entry ->
+                            entries.add(entry)
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error parsing diary entry", e)
+                    }
                 }
                 entries.sortByDescending { it.timestamp }
-                Log.d(TAG, "Diary entries observed: ${entries.size}")
+                Log.d(TAG, "📥 Diary entries observed: ${entries.size}")
                 trySend(entries)
             }
 
@@ -139,7 +141,6 @@ object FirebaseManager {
         database.child("diary_entries").child(partnerId).addValueEventListener(listener)
 
         awaitClose {
-            Log.d(TAG, "Stopping diary entries observation")
             database.child("diary_entries").child(partnerId).removeEventListener(listener)
         }
     }
@@ -151,9 +152,9 @@ object FirebaseManager {
     suspend fun saveThought(partnerId: String, thought: ThoughtEntry) {
         try {
             val thoughtId = database.child("thoughts").child(partnerId).push().key ?: return
-            Log.d(TAG, "Saving thought: $thoughtId")
+            Log.d(TAG, "💾 Saving thought: $thoughtId")
             database.child("thoughts").child(partnerId).child(thoughtId).setValue(thought).await()
-            Log.d(TAG, "✅ Thought saved successfully")
+            Log.d(TAG, "✅ Thought saved")
         } catch (e: Exception) {
             Log.e(TAG, "❌ Error saving thought", e)
             throw e
@@ -169,7 +170,7 @@ object FirebaseManager {
                 for (child in snapshot.children) {
                     child.getValue(ThoughtEntry::class.java)?.let { thoughts.add(it) }
                 }
-                Log.d(TAG, "Thoughts observed: ${thoughts.size}")
+                Log.d(TAG, "📥 Thoughts observed: ${thoughts.size}")
                 trySend(thoughts)
             }
 
@@ -182,7 +183,6 @@ object FirebaseManager {
         database.child("thoughts").child(partnerId).addValueEventListener(listener)
 
         awaitClose {
-            Log.d(TAG, "Stopping thoughts observation")
             database.child("thoughts").child(partnerId).removeEventListener(listener)
         }
     }

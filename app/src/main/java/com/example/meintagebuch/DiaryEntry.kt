@@ -5,11 +5,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "diary_entries")
 data class DiaryEntry(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey val id: String = "",  // Firebase-ID als Primary Key
     val text: String = "",
     val authorId: String = "ME",
     val timestamp: Long = System.currentTimeMillis()
 ) {
-    // No-Arg Constructor für Firebase (wird automatisch generiert durch data class mit Defaults)
+    // No-Arg Constructor für Firebase
 }

@@ -5,7 +5,7 @@ import androidx.room.*
 
 @Dao
 interface DiaryDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entry: DiaryEntry)
 
     @Query("SELECT * FROM diary_entries ORDER BY timestamp DESC")
@@ -16,4 +16,7 @@ interface DiaryDao {
 
     @Query("DELETE FROM diary_entries")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM diary_entries WHERE id = :entryId LIMIT 1")
+    suspend fun getEntryById(entryId: String): DiaryEntry?
 }

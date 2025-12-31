@@ -7,14 +7,14 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [ThoughtEntry::class, DiaryEntry::class, PhotoEntry::class, PartnerInvite::class],
-    version = 103,
+    version = 104,  // Version erhöht wegen Schema-Änderung
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun thoughtDao(): ThoughtDao
     abstract fun diaryDao(): DiaryDao
     abstract fun photoDao(): PhotoDao
-    abstract fun partnerInviteDao(): PartnerInviteDao   // <-- Korrigiert
+    abstract fun partnerInviteDao(): PartnerInviteDao
 
     companion object {
         @Volatile
@@ -26,7 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "diary_database"
-                ).fallbackToDestructiveMigration() // optional beim Testen
+                ).fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

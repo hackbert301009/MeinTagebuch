@@ -20,7 +20,6 @@ class PartnerActivity : AppCompatActivity() {
 
         Log.d(TAG, "PartnerActivity created")
 
-        // Toolbar einrichten
         val toolbar: Toolbar = findViewById(R.id.partnerToolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -32,36 +31,32 @@ class PartnerActivity : AppCompatActivity() {
         val inviteListText: TextView = findViewById(R.id.inviteListText)
         val partnerStatusText: TextView = findViewById(R.id.partnerStatusText)
 
-        // Einladung erstellen und teilen
         inviteButton.setOnClickListener {
             Log.d(TAG, "Invite button clicked")
             val link = InviteManager.createInviteLink(this)
             shareInvite(link)
         }
 
-        // Firebase-Einladungen beobachten und mit lokaler DB synchronisieren
+        // Firebase-Einladungen beobachten und synchronisieren
         lifecycleScope.launch {
             try {
                 Log.d(TAG, "Starting Firebase observation")
                 FirebaseManager.observeInvites().collect { firebaseInvites ->
-                    Log.d(TAG, "Received ${firebaseInvites.size} invites from Firebase")
+                    Log.d(TAG, "📥 Received ${firebaseInvites.size} invites from Firebase")
 
-                    // Firebase-Daten in lokale DB synchronisieren
                     firebaseInvites.forEach { invite ->
                         try {
                             val localInvite = db.partnerInviteDao().getInviteById(invite.inviteId)
                             if (localInvite == null) {
-                                // Neue Einladung aus Firebase in lokale DB einfügen
-                                Log.d(TAG, "Inserting new invite: ${invite.inviteId}")
+                                Log.d(TAG, "📝 New invite from Firebase: ${invite.inviteId}")
                                 db.partnerInviteDao().insert(invite)
                             } else if (localInvite.accepted != invite.accepted ||
                                        localInvite.partnerName != invite.partnerName) {
-                                // Einladung aktualisieren - KORRIGIERT!
-                                Log.d(TAG, "Updating invite: ${invite.inviteId} with name: ${invite.partnerName}, accepted: ${invite.accepted}")
+                                Log.d(TAG, "🔄 Updating invite: ${invite.inviteId}")
                                 db.partnerInviteDao().updateNameAndAccept(
                                     invite.inviteId,
                                     invite.partnerName,
-                                    invite.accepted  // WICHTIG: accepted-Status auch übergeben!
+                                    invite.accepted
                                 )
                             }
                         } catch (e: Exception) {
@@ -74,35 +69,42 @@ class PartnerActivity : AppCompatActivity() {
             }
         }
 
-        // Lokale Einladungen beobachten und UI aktualisieren
+        // Lokale Einladungen beobachten
         db.partnerInviteDao().getAllInvites().observe(this) { invites ->
-            Log.d(TAG, "Local invites updated: ${invites.size}")
+            Log.d(TAG, "📊 Local invites updated: ${invites.size}")
 
-            // Partner-Status aktualisieren
-            val acceptedPartners = invites.filter { it.accepted }
+            // Partner-Status: Nur akzeptierte Partner zählen
+            val acceptedPartners = invites.filter { it.accepted && it.partnerName != "Unknown" }
+
             if (acceptedPartners.isNotEmpty()) {
                 val partnerNames = acceptedPartners.joinToString(", ") { it.partnerName }
                 partnerStatusText.text = getString(R.string.partner_status_connected, partnerNames)
+                Log.d(TAG, "✅ Connected partners: $partnerNames")
             } else {
                 partnerStatusText.text = getString(R.string.partner_status_none)
+                Log.d(TAG, "⏳ No partners connected yet")
             }
 
-            // Einladungsliste aktualisieren
+            // Einladungsliste
             if (invites.isEmpty()) {
                 inviteListText.text = getString(R.string.partner_invites_empty)
             } else {
-                inviteListText.text = invites.joinToString("\n") {
-                    if (it.accepted)
-                        "✅ ${it.partnerName}"
-                    else
-                        "⏳ ${it.partnerName} (${getString(R.string.partner_pending)})"
+                inviteListText.text = invites.joinToString("\n") { invite ->
+                    when {
+                        invite.accepted && invite.partnerName != "Unknown" ->
+                            "✅ ${invite.partnerName}"
+                        invite.accepted ->
+                            "✅ ${invite.partnerName} (Verbunden)"
+                        else ->
+                            "⏳ Ausstehend..."
+                    }
                 }
             }
         }
     }
 
     private fun shareInvite(link: String) {
-        Log.d(TAG, "Sharing invite: $link")
+        Log.d(TAG, "📤 Sharing invite: $link")
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, getString(R.string.partner_invite_share, link))
@@ -111,7 +113,6 @@ class PartnerActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        Log.d(TAG, "Navigate up pressed")
         finish()
         return true
     }
