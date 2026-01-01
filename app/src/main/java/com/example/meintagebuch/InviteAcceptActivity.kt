@@ -3,6 +3,7 @@ package com.example.meintagebuch
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -18,7 +19,7 @@ class InviteAcceptActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val inviteId = intent?.data?.getQueryParameter("code")
-        Log.d(TAG, "Invite ID received: $inviteId")
+        Log.d(TAG, "📥 Invite ID received: $inviteId")
 
         if (inviteId == null) {
             Toast.makeText(this, getString(R.string.invite_invalid), Toast.LENGTH_SHORT).show()
@@ -26,24 +27,66 @@ class InviteAcceptActivity : AppCompatActivity() {
             return
         }
 
-        showNameInputDialog(inviteId)
+        // Zuerst Einladung aus Firebase holen
+        lifecycleScope.launch {
+            try {
+                val firebaseInvite = FirebaseManager.getInvite(inviteId)
+
+                if (firebaseInvite == null) {
+                    Log.e(TAG, "❌ Invite not found in Firebase")
+                    Toast.makeText(
+                        this@InviteAcceptActivity,
+                        getString(R.string.invite_invalid),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    finish()
+                    return@launch
+                }
+
+                Log.d(TAG, "✅ Invite found: creator=${firebaseInvite.creatorName}, accepted=${firebaseInvite.accepted}")
+
+                if (firebaseInvite.accepted) {
+                    Toast.makeText(
+                        this@InviteAcceptActivity,
+                        "Diese Einladung wurde bereits angenommen",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    finish()
+                    return@launch
+                }
+
+                // Einladung ist gültig, Namen abfragen
+                showNameInputDialog(inviteId, firebaseInvite.creatorName)
+
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Error loading invite", e)
+                Toast.makeText(
+                    this@InviteAcceptActivity,
+                    "Fehler beim Laden der Einladung",
+                    Toast.LENGTH_LONG
+                ).show()
+                finish()
+            }
+        }
     }
 
-    private fun showNameInputDialog(inviteId: String) {
-        val input = EditText(this)
-        input.hint = getString(R.string.invite_accept_hint)
+    private fun showNameInputDialog(inviteId: String, creatorName: String) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_two_names, null)
+        val myNameInput: EditText = dialogView.findViewById(R.id.myNameInput)
 
         AlertDialog.Builder(this)
-            .setTitle(getString(R.string.invite_accept_title))
-            .setMessage(getString(R.string.invite_accept_message))
-            .setView(input)
+            .setTitle("Einladung von $creatorName")
+            .setMessage("Wie heißt du?")
+            .setView(dialogView)
             .setCancelable(false)
             .setPositiveButton(getString(R.string.invite_accept_button)) { dialog, _ ->
-                val name = input.text.toString().ifBlank {
-                    getString(R.string.invite_default_name)
-                }
+                val myName = myNameInput.text.toString().ifBlank { "Partner" }
+
+                // Meinen Namen speichern
+                PartnerNameHelper.setMyName(this, myName)
+
                 dialog.dismiss()
-                acceptInvite(inviteId, name)
+                acceptInvite(inviteId, myName, creatorName)
             }
             .setNegativeButton(getString(R.string.invite_cancel_button)) { _, _ ->
                 finish()
@@ -51,76 +94,41 @@ class InviteAcceptActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun acceptInvite(inviteId: String, name: String) {
+    private fun acceptInvite(inviteId: String, myName: String, creatorName: String) {
         Toast.makeText(this, "Einladung wird angenommen...", Toast.LENGTH_SHORT).show()
 
         lifecycleScope.launch {
             try {
-                Log.d(TAG, "Trying to get invite from Firebase: $inviteId")
+                Log.d(TAG, "💾 Accepting invite - My name: $myName, Creator: $creatorName")
 
-                val firebaseInvite = FirebaseManager.getInvite(inviteId)
-                Log.d(TAG, "Firebase invite: $firebaseInvite")
+                // In Firebase aktualisieren
+                FirebaseManager.updateInviteAccept(inviteId, myName, true)
 
-                if (firebaseInvite != null) {
-                    // In Firebase aktualisieren
-                    Log.d(TAG, "Updating Firebase with name: $name")
-                    FirebaseManager.updateInvite(inviteId, name, true)
-
-                    // Auch lokal speichern
-                    val db = AppDatabase.getDatabase(this@InviteAcceptActivity)
-                    val localInvite = db.partnerInviteDao().getInviteById(inviteId)
-
-                    if (localInvite != null) {
-                        Log.d(TAG, "Updating local invite")
-                        db.partnerInviteDao().updateNameAndAccept(inviteId, name, true)
-                    } else {
-                        Log.d(TAG, "Inserting new local invite")
-                        db.partnerInviteDao().insert(
-                            PartnerInvite(
-                                inviteId = inviteId,
-                                partnerName = name,
-                                accepted = true
-                            )
-                        )
-                    }
-
-                    Toast.makeText(
-                        this@InviteAcceptActivity,
-                        getString(R.string.invite_accepted),
-                        Toast.LENGTH_LONG
-                    ).show()
-
-                    val intent = Intent(this@InviteAcceptActivity, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                } else {
-                    Log.e(TAG, "Firebase invite is null - creating new one")
-
-                    val newInvite = PartnerInvite(
+                // Lokal speichern
+                val db = AppDatabase.getDatabase(this@InviteAcceptActivity)
+                db.partnerInviteDao().insert(
+                    PartnerInvite(
                         inviteId = inviteId,
-                        partnerName = name,
+                        creatorName = creatorName,  // Name des Einladenden
+                        acceptorName = myName,      // Mein Name
                         accepted = true
                     )
+                )
 
-                    // In Firebase speichern
-                    FirebaseManager.createInvite(newInvite)
+                Log.d(TAG, "✅ Invite accepted successfully")
 
-                    // Lokal speichern
-                    val db = AppDatabase.getDatabase(this@InviteAcceptActivity)
-                    db.partnerInviteDao().insert(newInvite)
+                Toast.makeText(
+                    this@InviteAcceptActivity,
+                    "Verbunden mit $creatorName! 💕",
+                    Toast.LENGTH_LONG
+                ).show()
 
-                    Toast.makeText(
-                        this@InviteAcceptActivity,
-                        getString(R.string.invite_accepted),
-                        Toast.LENGTH_LONG
-                    ).show()
+                val intent = Intent(this@InviteAcceptActivity, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
 
-                    val intent = Intent(this@InviteAcceptActivity, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                }
             } catch (e: Exception) {
-                Log.e(TAG, "Error accepting invite", e)
+                Log.e(TAG, "❌ Error accepting invite", e)
                 Toast.makeText(
                     this@InviteAcceptActivity,
                     "Fehler: ${e.message}",

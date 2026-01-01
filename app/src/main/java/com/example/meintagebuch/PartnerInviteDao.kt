@@ -17,8 +17,8 @@ interface PartnerInviteDao {
 
     @Query("""
         UPDATE partner_invites 
-        SET partnerName = :name, accepted = :accepted 
+        SET acceptorName = :acceptorName, accepted = :accepted 
         WHERE inviteId = :inviteId
     """)
-    suspend fun updateNameAndAccept(inviteId: String, name: String, accepted: Boolean)
+    suspend fun updateAccept(inviteId: String, acceptorName: String, accepted: Boolean)
 }

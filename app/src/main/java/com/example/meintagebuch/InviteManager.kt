@@ -1,6 +1,7 @@
 package com.example.meintagebuch
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -8,17 +9,23 @@ import java.util.UUID
 
 object InviteManager {
 
+    private const val TAG = "InviteManager"
+
     fun createInviteLink(context: Context): String {
         val inviteId = UUID.randomUUID().toString()
 
-        // HTTPS Link mit deiner Domain
+        // Meinen Namen holen
+        val myName = PartnerNameHelper.getMyName(context).ifBlank { "Unbekannt" }
+
+        Log.d(TAG, "Creating invite with creator name: $myName")
+
         val link = "https://app.hackbert.org/invite?code=$inviteId"
 
-        // Sowohl in lokaler Datenbank als auch in Firebase speichern
         CoroutineScope(Dispatchers.IO).launch {
             val invite = PartnerInvite(
                 inviteId = inviteId,
-                partnerName = "Unknown",
+                creatorName = myName,        // ICH bin der Creator
+                acceptorName = "Unknown",    // Partner noch unbekannt
                 accepted = false
             )
 
@@ -29,6 +36,8 @@ object InviteManager {
 
             // In Firebase speichern
             FirebaseManager.createInvite(invite)
+
+            Log.d(TAG, "✅ Invite created: $inviteId")
         }
 
         return link

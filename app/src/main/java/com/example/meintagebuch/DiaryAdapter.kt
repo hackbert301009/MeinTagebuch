@@ -40,10 +40,16 @@ class DiaryAdapter : RecyclerView.Adapter<DiaryAdapter.DiaryViewHolder>() {
             textView.text = entry.text
             dateView.text = dateFormat.format(Date(entry.timestamp))
 
-            // Autor anzeigen
-            authorView.text = when (entry.authorId) {
-                "ME" -> "📝 ${itemView.context.getString(R.string.diary_author_me)}"
-                else -> "💑 ${entry.authorId}"
+            // Meinen Namen holen
+            val myName = PartnerNameHelper.getMyName(itemView.context)
+
+            // Autor-Name anzeigen
+            if (entry.authorId == myName) {
+                // Mein eigener Eintrag
+                authorView.text = "📝 ${itemView.context.getString(R.string.diary_author_me)}"
+            } else {
+                // Eintrag vom Partner
+                authorView.text = "💑 ${entry.authorId}"
             }
             authorView.visibility = View.VISIBLE
         }

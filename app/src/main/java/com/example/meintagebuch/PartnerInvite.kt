@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "partner_invites")
 data class PartnerInvite(
     @PrimaryKey val inviteId: String,
-    val partnerName: String,
-    val accepted: Boolean
+    val creatorName: String = "Unknown",      // Name des Einladenden
+    val acceptorName: String = "Unknown",     // Name des Annehmenden
+    val accepted: Boolean = false
 )

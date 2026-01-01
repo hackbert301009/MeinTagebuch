@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [ThoughtEntry::class, DiaryEntry::class, PhotoEntry::class, PartnerInvite::class],
-    version = 104,  // Version erhöht wegen Schema-Änderung
+    version = 105,  // Version erhöht
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

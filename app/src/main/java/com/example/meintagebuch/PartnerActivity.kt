@@ -3,8 +3,11 @@ package com.example.meintagebuch
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
@@ -18,8 +21,6 @@ class PartnerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_partner)
 
-        Log.d(TAG, "PartnerActivity created")
-
         val toolbar: Toolbar = findViewById(R.id.partnerToolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -32,57 +33,74 @@ class PartnerActivity : AppCompatActivity() {
         val partnerStatusText: TextView = findViewById(R.id.partnerStatusText)
 
         inviteButton.setOnClickListener {
-            Log.d(TAG, "Invite button clicked")
-            val link = InviteManager.createInviteLink(this)
-            shareInvite(link)
+            // Namen abfragen falls noch nicht vorhanden
+            if (!PartnerNameHelper.hasMyName(this)) {
+                showMyNameDialog()
+            } else {
+                val link = InviteManager.createInviteLink(this)
+                shareInvite(link)
+            }
         }
 
-        // Firebase-Einladungen beobachten und synchronisieren
+        // Firebase beobachten
         lifecycleScope.launch {
             try {
-                Log.d(TAG, "Starting Firebase observation")
                 FirebaseManager.observeInvites().collect { firebaseInvites ->
-                    Log.d(TAG, "📥 Received ${firebaseInvites.size} invites from Firebase")
+                    Log.d(TAG, "📥 Firebase invites: ${firebaseInvites.size}")
 
                     firebaseInvites.forEach { invite ->
                         try {
                             val localInvite = db.partnerInviteDao().getInviteById(invite.inviteId)
                             if (localInvite == null) {
-                                Log.d(TAG, "📝 New invite from Firebase: ${invite.inviteId}")
+                                Log.d(TAG, "📝 New invite from Firebase")
                                 db.partnerInviteDao().insert(invite)
                             } else if (localInvite.accepted != invite.accepted ||
-                                       localInvite.partnerName != invite.partnerName) {
-                                Log.d(TAG, "🔄 Updating invite: ${invite.inviteId}")
-                                db.partnerInviteDao().updateNameAndAccept(
+                                       localInvite.acceptorName != invite.acceptorName) {
+                                Log.d(TAG, "🔄 Updating invite")
+                                db.partnerInviteDao().updateAccept(
                                     invite.inviteId,
-                                    invite.partnerName,
+                                    invite.acceptorName,
                                     invite.accepted
                                 )
                             }
                         } catch (e: Exception) {
-                            Log.e(TAG, "Error syncing invite: ${invite.inviteId}", e)
+                            Log.e(TAG, "Error syncing invite", e)
                         }
                     }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error observing Firebase invites", e)
+                Log.e(TAG, "Error observing Firebase", e)
             }
         }
 
-        // Lokale Einladungen beobachten
+        // Lokale Invites beobachten
         db.partnerInviteDao().getAllInvites().observe(this) { invites ->
-            Log.d(TAG, "📊 Local invites updated: ${invites.size}")
+            Log.d(TAG, "📊 Local invites: ${invites.size}")
 
-            // Partner-Status: Nur akzeptierte Partner zählen
-            val acceptedPartners = invites.filter { it.accepted && it.partnerName != "Unknown" }
+            val myName = PartnerNameHelper.getMyName(this)
 
-            if (acceptedPartners.isNotEmpty()) {
-                val partnerNames = acceptedPartners.joinToString(", ") { it.partnerName }
-                partnerStatusText.text = getString(R.string.partner_status_connected, partnerNames)
-                Log.d(TAG, "✅ Connected partners: $partnerNames")
+            // Partner-Status berechnen
+            val acceptedInvites = invites.filter { it.accepted }
+
+            if (acceptedInvites.isNotEmpty()) {
+                val partnerNames = acceptedInvites.mapNotNull { invite ->
+                    // Bin ich der Creator oder Acceptor?
+                    if (invite.creatorName == myName && invite.acceptorName != "Unknown") {
+                        invite.acceptorName  // Ich habe eingeladen, zeige Acceptor
+                    } else if (invite.acceptorName == myName) {
+                        invite.creatorName   // Ich habe angenommen, zeige Creator
+                    } else null
+                }.filter { it.isNotBlank() && it != "Unknown" }
+
+                if (partnerNames.isNotEmpty()) {
+                    val names = partnerNames.joinToString(", ")
+                    partnerStatusText.text = getString(R.string.partner_status_connected, names)
+                    Log.d(TAG, "✅ Connected with: $names")
+                } else {
+                    partnerStatusText.text = getString(R.string.partner_status_none)
+                }
             } else {
                 partnerStatusText.text = getString(R.string.partner_status_none)
-                Log.d(TAG, "⏳ No partners connected yet")
             }
 
             // Einladungsliste
@@ -90,11 +108,17 @@ class PartnerActivity : AppCompatActivity() {
                 inviteListText.text = getString(R.string.partner_invites_empty)
             } else {
                 inviteListText.text = invites.joinToString("\n") { invite ->
+                    val partnerName = if (invite.creatorName == myName) {
+                        invite.acceptorName
+                    } else {
+                        invite.creatorName
+                    }
+
                     when {
-                        invite.accepted && invite.partnerName != "Unknown" ->
-                            "✅ ${invite.partnerName}"
+                        invite.accepted && partnerName != "Unknown" ->
+                            "✅ $partnerName"
                         invite.accepted ->
-                            "✅ ${invite.partnerName} (Verbunden)"
+                            "✅ Verbunden"
                         else ->
                             "⏳ Ausstehend..."
                     }
@@ -103,8 +127,27 @@ class PartnerActivity : AppCompatActivity() {
         }
     }
 
+    private fun showMyNameDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_two_names, null)
+        val myNameInput: EditText = dialogView.findViewById(R.id.myNameInput)
+
+        AlertDialog.Builder(this)
+            .setTitle("Dein Name")
+            .setMessage("Wie heißt du?")
+            .setView(dialogView)
+            .setCancelable(false)
+            .setPositiveButton("Weiter") { _, _ ->
+                val myName = myNameInput.text.toString().ifBlank { "Ich" }
+                PartnerNameHelper.setMyName(this, myName)
+
+                val link = InviteManager.createInviteLink(this)
+                shareInvite(link)
+            }
+            .setNegativeButton("Abbrechen", null)
+            .show()
+    }
+
     private fun shareInvite(link: String) {
-        Log.d(TAG, "📤 Sharing invite: $link")
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, getString(R.string.partner_invite_share, link))
@@ -115,10 +158,5 @@ class PartnerActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "PartnerActivity destroyed")
     }
 }

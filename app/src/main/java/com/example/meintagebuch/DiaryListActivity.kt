@@ -1,7 +1,6 @@
 package com.example.meintagebuch
 
 import android.app.AlertDialog
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -47,23 +46,20 @@ class DiaryListActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Firebase-Einträge beobachten und AUTOMATISCH synchronisieren
+        // Firebase-Einträge beobachten und synchronisieren
         lifecycleScope.launch {
             try {
                 Log.d(TAG, "Starting Firebase sync for diary entries")
                 FirebaseManager.observeDiaryEntries(partnerId).collect { firebaseEntries ->
                     Log.d(TAG, "📥 Received ${firebaseEntries.size} entries from Firebase")
 
-                    // Alle Firebase-Einträge in lokale DB übernehmen
                     firebaseEntries.forEach { entry ->
                         try {
                             val existingEntry = database.diaryDao().getEntryById(entry.id)
                             if (existingEntry == null) {
-                                // Neuer Eintrag vom Partner
                                 Log.d(TAG, "📝 New entry from Firebase: ${entry.id} by ${entry.authorId}")
                                 database.diaryDao().insert(entry)
                             }
-                            // Falls bereits vorhanden: nichts tun (keine Duplikate)
                         } catch (e: Exception) {
                             Log.e(TAG, "Error syncing entry: ${entry.id}", e)
                         }
@@ -74,7 +70,7 @@ class DiaryListActivity : AppCompatActivity() {
             }
         }
 
-        // Lokale Tagebuch-Einträge beobachten und UI aktualisieren
+        // Lokale Einträge beobachten
         database.diaryDao().getAllEntries().observe(this) { entries ->
             Log.d(TAG, "📊 Local entries: ${entries.size}")
             if (entries.isEmpty()) {
@@ -102,26 +98,27 @@ class DiaryListActivity : AppCompatActivity() {
                 if (text.isNotBlank()) {
                     lifecycleScope.launch {
                         try {
-                            val authorName = getAuthorName()
+                            // Meinen Namen verwenden
+                            val myName = PartnerNameHelper.getMyName(this@DiaryListActivity)
+                                .ifBlank { "Ich" }
 
-                            // Eindeutige ID generieren
                             val entryId = UUID.randomUUID().toString()
 
                             val entry = DiaryEntry(
                                 id = entryId,
                                 text = text,
-                                authorId = authorName
+                                authorId = myName  // Mein Name als Autor
                             )
 
-                            Log.d(TAG, "💾 Saving new entry: $entryId")
+                            Log.d(TAG, "💾 Saving entry by: $myName")
 
-                            // Zuerst in Firebase speichern
+                            // In Firebase speichern
                             FirebaseManager.saveDiaryEntry(partnerId, entry)
 
-                            // Dann lokal speichern
+                            // Lokal speichern
                             database.diaryDao().insert(entry)
 
-                            Log.d(TAG, "✅ Entry saved successfully")
+                            Log.d(TAG, "✅ Entry saved")
                         } catch (e: Exception) {
                             Log.e(TAG, "❌ Error saving entry", e)
                         }
@@ -130,10 +127,5 @@ class DiaryListActivity : AppCompatActivity() {
             }
             .setNegativeButton("Abbrechen", null)
             .show()
-    }
-
-    private fun getAuthorName(): String {
-        val prefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        return prefs.getString("my_name", "Ich") ?: "Ich"
     }
 }
