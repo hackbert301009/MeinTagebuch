@@ -32,7 +32,7 @@ class DiaryListActivity : AppCompatActivity() {
         val toolbar: MaterialToolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "📓 Tagebuch"
+        supportActionBar?.title = "📔 Tagebuch"
 
         toolbar.setNavigationOnClickListener {
             finish()
@@ -49,30 +49,40 @@ class DiaryListActivity : AppCompatActivity() {
         // Firebase-Einträge beobachten und synchronisieren
         lifecycleScope.launch {
             try {
-                Log.d(TAG, "Starting Firebase sync for diary entries")
+                Log.d(TAG, "👀 Starting Firebase sync for diary entries")
+
                 FirebaseManager.observeDiaryEntries(partnerId).collect { firebaseEntries ->
-                    Log.d(TAG, "📥 Received ${firebaseEntries.size} entries from Firebase")
+                    Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                    Log.d(TAG, "🔥 Received ${firebaseEntries.size} entries from Firebase")
 
                     firebaseEntries.forEach { entry ->
                         try {
+                            Log.d(TAG, "   Entry ${entry.id.take(8)}:")
+                            Log.d(TAG, "      Author: '${entry.authorId}'")
+                            Log.d(TAG, "      Text: ${entry.text.take(30)}...")
+
                             val existingEntry = database.diaryDao().getEntryById(entry.id)
                             if (existingEntry == null) {
-                                Log.d(TAG, "📝 New entry from Firebase: ${entry.id} by ${entry.authorId}")
+                                Log.d(TAG, "      → New entry, inserting")
                                 database.diaryDao().insert(entry)
+                            } else {
+                                Log.d(TAG, "      → Entry already exists")
                             }
                         } catch (e: Exception) {
-                            Log.e(TAG, "Error syncing entry: ${entry.id}", e)
+                            Log.e(TAG, "   ❌ Error syncing entry: ${entry.id}", e)
                         }
                     }
+                    Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error observing Firebase entries", e)
+                Log.e(TAG, "❌ Error observing Firebase entries", e)
             }
         }
 
         // Lokale Einträge beobachten
         database.diaryDao().getAllEntries().observe(this) { entries ->
-            Log.d(TAG, "📊 Local entries: ${entries.size}")
+            Log.d(TAG, "📊 Local entries updated: ${entries.size}")
+
             if (entries.isEmpty()) {
                 emptyText.visibility = TextView.VISIBLE
             } else {
@@ -94,38 +104,53 @@ class DiaryListActivity : AppCompatActivity() {
             .setTitle("✏️ Neuer Tagebuch-Eintrag")
             .setView(dialogView)
             .setPositiveButton("Speichern") { _, _ ->
-                val text = editText.text.toString()
+                val text = editText.text.toString().trim()
                 if (text.isNotBlank()) {
-                    lifecycleScope.launch {
-                        try {
-                            // Meinen Namen verwenden
-                            val myName = PartnerNameHelper.getMyName(this@DiaryListActivity)
-                                .ifBlank { "Ich" }
-
-                            val entryId = UUID.randomUUID().toString()
-
-                            val entry = DiaryEntry(
-                                id = entryId,
-                                text = text,
-                                authorId = myName  // Mein Name als Autor
-                            )
-
-                            Log.d(TAG, "💾 Saving entry by: $myName")
-
-                            // In Firebase speichern
-                            FirebaseManager.saveDiaryEntry(partnerId, entry)
-
-                            // Lokal speichern
-                            database.diaryDao().insert(entry)
-
-                            Log.d(TAG, "✅ Entry saved")
-                        } catch (e: Exception) {
-                            Log.e(TAG, "❌ Error saving entry", e)
-                        }
-                    }
+                    saveNewEntry(text)
                 }
             }
             .setNegativeButton("Abbrechen", null)
             .show()
+    }
+
+    private fun saveNewEntry(text: String) {
+        lifecycleScope.launch {
+            try {
+                // Meinen Namen verwenden (getrimmt!)
+                val myName = PartnerNameHelper.getMyName(this@DiaryListActivity).trim()
+                    .ifBlank { "Ich" }
+
+                val entryId = UUID.randomUUID().toString()
+
+                Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                Log.d(TAG, "💾 Saving new entry")
+                Log.d(TAG, "   ID: $entryId")
+                Log.d(TAG, "   Author (me): '$myName'")
+                Log.d(TAG, "   Text: ${text.take(50)}...")
+
+                val entry = DiaryEntry(
+                    id = entryId,
+                    text = text,
+                    authorId = myName  // Mein Name als Autor (getrimmt!)
+                )
+
+                // In Firebase speichern
+                Log.d(TAG, "🔄 Saving to Firebase...")
+                FirebaseManager.saveDiaryEntry(partnerId, entry)
+                Log.d(TAG, "✅ Saved to Firebase")
+
+                // Lokal speichern
+                Log.d(TAG, "🔄 Saving locally...")
+                database.diaryDao().insert(entry)
+                Log.d(TAG, "✅ Saved locally")
+
+                Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Error saving entry", e)
+                Log.e(TAG, "   Message: ${e.message}")
+                Log.e(TAG, "   Stack: ${e.stackTraceToString()}")
+            }
+        }
     }
 }

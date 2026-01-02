@@ -40,17 +40,31 @@ class DiaryAdapter : RecyclerView.Adapter<DiaryAdapter.DiaryViewHolder>() {
             textView.text = entry.text
             dateView.text = dateFormat.format(Date(entry.timestamp))
 
-            // Meinen Namen holen
-            val myName = PartnerNameHelper.getMyName(itemView.context)
+            // Meinen Namen holen (getrimmt!)
+            val myName = PartnerNameHelper.getMyName(itemView.context).trim()
+
+            // Entry author auch trimmen für Vergleich
+            val entryAuthor = entry.authorId.trim()
+
+            // Debug-Logging
+            android.util.Log.d("DiaryAdapter", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            android.util.Log.d("DiaryAdapter", "Entry: ${entry.text.take(30)}...")
+            android.util.Log.d("DiaryAdapter", "   Entry author: '$entryAuthor'")
+            android.util.Log.d("DiaryAdapter", "   My name: '$myName'")
+            android.util.Log.d("DiaryAdapter", "   Are equal (case-insensitive): ${entryAuthor.equals(myName, ignoreCase = true)}")
 
             // Autor-Name anzeigen
-            if (entry.authorId == myName) {
+            if (entryAuthor.equals(myName, ignoreCase = true)) {
                 // Mein eigener Eintrag
                 authorView.text = "📝 ${itemView.context.getString(R.string.diary_author_me)}"
+                android.util.Log.d("DiaryAdapter", "   → Showing as MY entry")
             } else {
                 // Eintrag vom Partner
-                authorView.text = "💑 ${entry.authorId}"
+                authorView.text = "💑 $entryAuthor"
+                android.util.Log.d("DiaryAdapter", "   → Showing as PARTNER entry")
             }
+            android.util.Log.d("DiaryAdapter", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
             authorView.visibility = View.VISIBLE
         }
     }
