@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "523310743086",
+    "project_id": "my-love-9c55d",
+    "firebase_url": "https://my-love-9c55d-default-rtdb.europe-west1.firebasedatabase.app",
+    "storage_bucket": "my-love-9c55d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:523310743086:android:35aff85d4015889881e9bf",
+        "android_client_info": {
+          "package_name": "com.example.meintagebuch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFT5rRPtKeP22kN6mSQuRefLXtd-bzBsQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,73 @@
+<resources>
+    <!-- App Name -->
+    <string name="app_name">My Love Diary</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_language_label">🌍 Sprache / Language</string>
+    <string name="settings_language_german">🇩🇪 Deutsch</string>
+    <string name="settings_language_english">🇬🇧 English</string>
+    <string name="settings_restart_info">The app will restart after changing the language.</string>
+
+    <!-- Rating -->
+    <string name="settings_rate_title">Rate App</string>
+    <string name="settings_rate_subtitle">Share your feedback with us</string>
+    <string name="rating_dialog_title">How do you like the app?</string>
+    <string name="rating_message">Your rating helps us improve the app!</string>
+    <string name="rating_save">Save</string>
+    <string name="rating_none">No rating</string>
+    <string name="rating_bad">😔 Don\'t like it</string>
+    <string name="rating_okay">😐 Okay</string>
+    <string name="rating_good">😊 Good</string>
+    <string name="rating_excellent">🥰 Excellent!</string>
+    <string name="rating_thanks">Thank you for your rating! ❤️</string>
+
+    <!-- Main Activity -->
+    <string name="main_title">💕 My Love Diary</string>
+    <string name="total_thoughts">Total: %d thoughts</string>
+    <string name="thought_card_title">✨ Thought of you today ✨</string>
+    <string name="thought_count">%d times</string>
+    <string name="thought_button">💖 I\'m thinking of you</string>
+    <string name="sections_title">📂 Sections</string>
+
+    <!-- Cards -->
+    <string name="statistics_title">Statistics</string>
+    <string name="statistics_subtitle">See all days overview</string>
+    <string name="diary_title">Diary</string>
+    <string name="diary_subtitle">View all entries</string>
+    <string name="photos_title">Photo Gallery</string>
+    <string name="photos_subtitle">Capture memories</string>
+    <string name="partner_title">Partner</string>
+    <string name="partner_subtitle">Write together</string>
+
+    <!-- Partner Activity -->
+    <string name="partner_header">👑 Partner</string>
+    <string name="partner_description">Keep your diary together</string>
+    <string name="partner_status_header">💕 Your Status 💕</string>
+    <string name="partner_status_none">No partner connected yet</string>
+    <string name="partner_status_connected">Connected with: %s</string>
+    <string name="partner_pending">Pending</string>
+    <string name="partner_invite_header">🔗 Invitation</string>
+    <string name="partner_invite_button">💌 Invite Partner</string>
+    <string name="partner_invites_header">📋 Invitations</string>
+    <string name="partner_invites_empty">No invitations yet</string>
+    <string name="partner_invite_share">Diary invitation: %s</string>
+    <string name="partner_invite_share_title">Share invitation</string>
+
+    <!-- Invite Accept -->
+    <string name="invite_accept_title">Accept Invitation</string>
+    <string name="invite_accept_message">What should your name be displayed as?</string>
+    <string name="invite_accept_hint">Your name</string>
+    <string name="invite_accept_button">Accept</string>
+    <string name="invite_cancel_button">Cancel</string>
+    <string name="invite_default_name">Partner</string>
+    <string name="invite_invalid">Invalid invitation</string>
+    <string name="invite_accepted">Invitation accepted! 💕</string>
+
+    <!-- Diary -->
+    <string name="diary_author_me">Me</string>
+    <string name="diary_author_partner">Partner</string>
+    <string name="section_hilfe">help</string>
+    <string name="section_ueber_mich">About me</string>
+
+</resources>
