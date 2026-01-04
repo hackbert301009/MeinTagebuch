@@ -20,23 +20,279 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- Über mich Sektion -->
             <TextView
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Über mich"
-                android:textSize="26sp"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary_text"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Erzähle etwas über dich selbst..."
+                android:textSize="13sp"
+                android:textColor="@color/secondary_text"
+                android:layout_marginBottom="12dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                android:backgroundTint="@color/card_background">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <EditText
+                        android:id="@+id/aboutMeEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Meine Hobbys, Interessen, was mich ausmacht..."
+                        android:textColorHint="@color/secondary_text"
+                        android:textColor="@color/primary_text"
+                        android:minLines="6"
+                        android:gravity="top|start"
+                        android:padding="12dp"
+                        android:background="@null"
+                        android:inputType="textMultiLine|textCapSentences"/>
+
+                    <Button
+                        android:id="@+id/saveAboutMeButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💾 Speichern"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="8dp"
+                        app:cornerRadius="12dp"/>
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Entwickler Credits -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Credits und Rechtliches"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="@color/primary_text"
                 android:layout_marginBottom="16dp"/>
 
-            <EditText
-                android:hint="Hier kannst du deinen eigenen Text schreiben …"
-                android:minLines="6"
-                android:gravity="top"
-                android:padding="12dp"
-                android:background="@android:drawable/edit_text"
+            <!-- Entwickler Info Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                android:backgroundTint="@color/card_background">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <TextView
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:text="👨‍💻"
+                            android:textSize="32sp"
+                            android:gravity="center"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="16dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Entwickelt von Hackbert"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary_text"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Mit ❤️ entwickelt"
+                                android:textSize="13sp"
+                                android:textColor="@color/secondary_text"
+                                android:layout_marginTop="4dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#E0E0E0"
+                        android:layout_marginBottom="16dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Diese App wurde komplett eigenständig entwickelt und finanziert. Alle Rechte liegen bei Hackbert."
+                        android:textSize="14sp"
+                        android:textColor="@color/primary_text"
+                        android:lineSpacingExtra="4dp"
+                        android:layout_marginBottom="16dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="💡 Dieses Projekt wird vollständig privat finanziert, ohne externe Investoren oder Werbung. Deine Privatsphäre steht an erster Stelle."
+                        android:textSize="13sp"
+                        android:textColor="@color/secondary_text"
+                        android:lineSpacingExtra="4dp"
+                        android:layout_marginBottom="16dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🙏 Besonderer Dank"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_text"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• Allen Beta-Testern für ihr wertvolles Feedback\n• Der Open-Source-Community für großartige Tools\n• Dir, für die Nutzung dieser App! 💕"
+                        android:textSize="13sp"
+                        android:textColor="@color/secondary_text"
+                        android:lineSpacingExtra="4dp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Copyright Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E0E0E0"
+                android:backgroundTint="@color/card_background">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:text="©"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:textColor="@color/primary"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="© 2025 Hackbert. Alle Rechte vorbehalten."
+                        android:textSize="13sp"
+                        android:textColor="@color/secondary_text"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Website Button -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/websiteCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:backgroundTint="@color/primary">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="20dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:text="🌐"
+                        android:textSize="28sp"
+                        android:gravity="center"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Besuche hackbert.org"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Mehr Projekte und Kontakt"
+                            android:textSize="13sp"
+                            android:textColor="@android:color/white"
+                            android:alpha="0.9"
+                            android:layout_marginTop="4dp"/>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_menu_send"
+                        app:tint="@android:color/white"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Version Info -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Version 1.0.0"
+                android:textSize="12sp"
+                android:textColor="@color/secondary_text"
+                android:gravity="center"
+                android:layout_marginTop="8dp"/>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

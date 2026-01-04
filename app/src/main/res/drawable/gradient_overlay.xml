@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="270"
+        android:startColor="#00000000"
+        android:endColor="#60000000"/>
+</shape>
+
+<!--
+Diese Datei muss gespeichert werden unter:
+app/src/main/res/drawable/gradient_overlay.xml
+
+Falls der Ordner "drawable" nicht existiert, erstelle ihn.
+-->
