@@ -3,18 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:elevation="0dp"
+        android:background="@color/background">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/partnerToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:titleTextColor="@android:color/white"/>
+            android:background="@color/background"
+            app:titleTextColor="@color/primary_text"
+            app:navigationIconTint="@color/primary"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -22,58 +26,245 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:padding="16dp">
+        android:padding="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Partner Status -->
-            <TextView
-                android:id="@+id/partnerStatusText"
+            <!-- Partner Status Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/partner_status_none"
-                android:textSize="18sp"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="0dp"
+                android:backgroundTint="@color/primary">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💑"
+                        android:textSize="48sp"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Verbindungsstatus"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/white"
+                        android:alpha="0.85"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:id="@+id/partnerStatusText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/partner_status_none"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/white"
+                        android:textAlignment="center"
+                        android:gravity="center"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Aktionen Bereich -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aktionen"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:padding="16dp"
-                android:background="@android:color/white"
-                android:elevation="2dp"
+                android:textColor="@color/primary_text"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Invite Button -->
+            <!-- Invite Button Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/inviteButtonCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:backgroundTint="@color/card_background">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="20dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:text="✉️"
+                        android:textSize="32sp"
+                        android:gravity="center"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/partner_invite_button"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/primary_text"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Erstelle eine Einladung für deinen Partner"
+                            android:textSize="13sp"
+                            android:textColor="@color/secondary_text"
+                            android:layout_marginTop="2dp"/>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_media_play"
+                        android:rotation="180"
+                        app:tint="#BDBDBD"/>
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Versteckter Invite Button für Kompatibilität -->
             <Button
                 android:id="@+id/inviteButton"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"/>
+
+            <!-- Disconnect Button Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/disconnectButtonCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/partner_invite_button"
-                android:textSize="16sp"
-                android:padding="16dp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:backgroundTint="#FFEBEE"
+                android:alpha="0.5">
 
-            <!-- Disconnect Button -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="20dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:text="💔"
+                        android:textSize="32sp"
+                        android:gravity="center"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Partner trennen"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#C62828"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Verbindung beenden und Daten löschen"
+                            android:textSize="13sp"
+                            android:textColor="#D32F2F"
+                            android:layout_marginTop="2dp"/>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_media_play"
+                        android:rotation="180"
+                        app:tint="#E57373"/>
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Versteckter Disconnect Button für Kompatibilität -->
             <Button
                 android:id="@+id/disconnectPartnerButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="💔 Partner trennen"
-                android:textSize="16sp"
-                android:padding="16dp"
-                android:backgroundTint="@android:color/holo_red_dark"
-                android:layout_marginBottom="24dp"
-                android:enabled="false"
-                android:alpha="0.5"/>
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                android:enabled="false"/>
 
-            <!-- Info Text -->
-            <TextView
+            <!-- Info Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ℹ️ Hinweis: Beim Trennen werden alle gemeinsamen Tagebuch-Einträge gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."
-                android:textSize="14sp"
-                android:padding="12dp"
-                android:background="#FFF3CD"
-                android:layout_marginBottom="16dp"/>
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#FFD54F"
+                android:backgroundTint="#FFFDE7">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:text="⚠️"
+                        android:textSize="24sp"
+                        android:gravity="center"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Beim Trennen werden alle gemeinsamen Tagebuch-Einträge unwiderruflich gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."
+                        android:textSize="13sp"
+                        android:textColor="#F57F17"
+                        android:lineSpacingExtra="2dp"/>
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 

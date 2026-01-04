@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.launch
 
 class PartnerActivity : AppCompatActivity() {
@@ -36,12 +37,17 @@ class PartnerActivity : AppCompatActivity() {
         Log.d(TAG, "👤 My User ID: $myUserId")
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
-        val inviteButton: Button = findViewById(R.id.inviteButton)
-        val disconnectButton: Button = findViewById(R.id.disconnectPartnerButton)
+        // Cards statt Buttons
+        val inviteButtonCard: MaterialCardView = findViewById(R.id.inviteButtonCard)
+        val disconnectButtonCard: MaterialCardView = findViewById(R.id.disconnectButtonCard)
         val partnerStatusText: TextView = findViewById(R.id.partnerStatusText)
 
-        // Invite Button
-        inviteButton.setOnClickListener {
+        // Versteckte Buttons für Kompatibilität
+        val inviteButton: Button = findViewById(R.id.inviteButton)
+        val disconnectButton: Button = findViewById(R.id.disconnectPartnerButton)
+
+        // Invite Button Card
+        inviteButtonCard.setOnClickListener {
             if (!PartnerNameHelper.hasMyName(this)) {
                 showMyNameDialog()
             } else {
@@ -49,8 +55,8 @@ class PartnerActivity : AppCompatActivity() {
             }
         }
 
-        // Disconnect Button
-        disconnectButton.setOnClickListener {
+        // Disconnect Button Card
+        disconnectButtonCard.setOnClickListener {
             lifecycleScope.launch {
                 val partnership = db.partnershipDao().getFirstActivePartnership()
                 if (partnership != null) {
@@ -87,7 +93,7 @@ class PartnerActivity : AppCompatActivity() {
             }
         }
 
-        // Firebase Sync - Invites beobachten (wie vorher)
+        // Firebase Sync - Invites beobachten
         lifecycleScope.launch {
             try {
                 FirebaseManager.observeInvites().collect { firebaseInvites ->
@@ -119,13 +125,15 @@ class PartnerActivity : AppCompatActivity() {
 
             if (partnerships.isEmpty()) {
                 partnerStatusText.text = getString(R.string.partner_status_none)
+                disconnectButtonCard.isEnabled = false
+                disconnectButtonCard.alpha = 0.5f
                 disconnectButton.isEnabled = false
-                disconnectButton.alpha = 0.5f
             } else {
                 val names = partnerships.map { it.partnerName }.joinToString(", ")
                 partnerStatusText.text = getString(R.string.partner_status_connected, names)
+                disconnectButtonCard.isEnabled = true
+                disconnectButtonCard.alpha = 1.0f
                 disconnectButton.isEnabled = true
-                disconnectButton.alpha = 1.0f
             }
         }
     }
@@ -180,7 +188,6 @@ class PartnerActivity : AppCompatActivity() {
             partnership = partnership,
             lifecycleOwner = this,
             onDisconnected = {
-                // UI aktualisiert sich automatisch durch LiveData
                 Toast.makeText(this, "Verbindung getrennt", Toast.LENGTH_SHORT).show()
             }
         )
