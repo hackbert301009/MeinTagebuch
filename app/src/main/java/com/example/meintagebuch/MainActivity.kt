@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var totalThoughtsText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
 
         loadLanguagePreference()
@@ -123,4 +124,5 @@ class MainActivity : AppCompatActivity() {
         config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
     }
+
 }

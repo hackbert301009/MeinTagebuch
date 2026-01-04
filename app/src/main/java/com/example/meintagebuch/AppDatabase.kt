@@ -6,8 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [ThoughtEntry::class, DiaryEntry::class, PhotoEntry::class, PartnerInvite::class],
-    version = 105,  // Version erhöht
+    entities = [
+        ThoughtEntry::class,
+        DiaryEntry::class,
+        PhotoEntry::class,
+        PartnerInvite::class,
+        Partnership::class  // NEU!
+    ],
+    version = 106,  // Version erhöht
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -15,6 +21,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun diaryDao(): DiaryDao
     abstract fun photoDao(): PhotoDao
     abstract fun partnerInviteDao(): PartnerInviteDao
+    abstract fun partnershipDao(): PartnershipDao  // NEU!
 
     companion object {
         @Volatile

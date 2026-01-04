@@ -3,37 +3,33 @@ package com.example.meintagebuch
 import android.content.Context
 import android.util.Log
 import kotlinx.coroutines.delay
-import java.util.UUID
 
 object InviteManager {
 
     private const val TAG = "InviteManager"
 
-    /**
-     * Erstellt eine Einladung und wartet bis sie in Firebase gespeichert ist
-     * @return Invite-Link
-     * @throws Exception wenn Firebase-Speicherung fehlschlägt
-     */
     suspend fun createInviteLink(context: Context): String {
-        val inviteId = UUID.randomUUID().toString()
-
-        // Meinen Namen holen - dieser wird als Creator gespeichert
+        val inviteId = java.util.UUID.randomUUID().toString()
         val myName = PartnerNameHelper.getMyName(context).trim().ifBlank { "Unbekannt" }
+        val myUserId = UserIdHelper.getUserId(context)  // NEU!
 
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         Log.d(TAG, "📝 Creating new invite")
         Log.d(TAG, "   ID: $inviteId")
         Log.d(TAG, "   Creator (me): $myName")
+        Log.d(TAG, "   Creator User-ID: $myUserId")  // NEU!
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
         val invite = PartnerInvite(
             inviteId = inviteId,
             creatorName = myName,
             acceptorName = "Unknown",
-            accepted = false
+            accepted = false,
+            creatorUserId = myUserId,  // NEU!
+            acceptorUserId = ""        // NEU!
         )
 
-        // Schritt 1: Lokal speichern
+        // Lokal speichern
         try {
             AppDatabase.getDatabase(context)
                 .partnerInviteDao()
@@ -44,36 +40,24 @@ object InviteManager {
             throw Exception("Lokales Speichern fehlgeschlagen: ${e.message}")
         }
 
-        // Schritt 2: In Firebase speichern
+        // In Firebase speichern
         try {
             Log.d(TAG, "🔄 Saving to Firebase...")
             FirebaseManager.createInvite(invite)
-            Log.d(TAG, "✅ Firebase save command sent")
 
-            // Mehrere Versuche zur Verifizierung (Firebase braucht Zeit)
+            // Verifizierung
             var verified = false
             repeat(5) { attempt ->
-                delay(1500) // Länger warten zwischen Versuchen
-
-                Log.d(TAG, "🔍 Verification attempt ${attempt + 1}/5...")
+                delay(1500)
                 val savedInvite = FirebaseManager.getInvite(inviteId)
-
                 if (savedInvite != null) {
-                    Log.d(TAG, "✅ Invite verified in Firebase!")
-                    Log.d(TAG, "   Creator: ${savedInvite.creatorName}")
-                    Log.d(TAG, "   Acceptor: ${savedInvite.acceptorName}")
-                    Log.d(TAG, "   Accepted: ${savedInvite.accepted}")
                     verified = true
                     return@repeat
-                } else {
-                    Log.d(TAG, "⏳ Not yet visible in Firebase, waiting...")
                 }
             }
 
             if (!verified) {
-                Log.w(TAG, "⚠️ Could not verify invite in Firebase, but continuing anyway")
-                Log.w(TAG, "   The invite was saved, it might just take a moment to sync")
-                // Nicht werfen - die Einladung wurde gespeichert, nur die Verifizierung hat nicht geklappt
+                Log.w(TAG, "⚠️ Could not verify invite, but continuing")
             }
 
         } catch (e: Exception) {

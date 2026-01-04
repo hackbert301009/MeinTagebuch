@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/disconnectTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Partner trennen?"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/holo_red_dark"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/disconnectMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Möchtest du die Verbindung wirklich trennen?"
+        android:textSize="16sp"
+        android:layout_marginBottom="24dp"
+        android:lineSpacingMultiplier="1.2"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/cancelDisconnectButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Abbrechen"
+            android:layout_marginEnd="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+        <Button
+            android:id="@+id/confirmDisconnectButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trennen"
+            android:backgroundTint="@android:color/holo_red_dark"/>
+
+    </LinearLayout>
+
+</LinearLayout>

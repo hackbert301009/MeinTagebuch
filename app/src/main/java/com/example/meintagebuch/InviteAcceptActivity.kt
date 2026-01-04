@@ -11,24 +11,29 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
+import java.util.UUID
+import kotlinx.coroutines.tasks.await
 class InviteAcceptActivity : AppCompatActivity() {
 
     private val TAG = "InviteAcceptActivity"
+    private lateinit var myUserId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        myUserId = UserIdHelper.getUserId(this)
 
         val inviteId = intent?.data?.getQueryParameter("code")
 
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         Log.d(TAG, "📥 Invite Accept Activity started")
         Log.d(TAG, "   Invite ID: $inviteId")
+        Log.d(TAG, "   My User ID: $myUserId")
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
         if (inviteId == null) {
             Log.e(TAG, "❌ No invite ID in URL")
-            Toast.makeText(this, getString(R.string.invite_invalid), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Ungültige Einladung", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -41,22 +46,25 @@ class InviteAcceptActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                Log.d(TAG, "🔄 Loading invite from Firebase...")
+                Log.d(TAG, "🔄 Trying to load invite from Firebase...")
 
-                // Mehrere Versuche, da Firebase manchmal langsam ist
                 var firebaseInvite: PartnerInvite? = null
                 repeat(3) { attempt ->
                     Log.d(TAG, "   Attempt ${attempt + 1}/3")
-                    firebaseInvite = FirebaseManager.getInvite(inviteId)
-                    if (firebaseInvite != null) {
-                        Log.d(TAG, "   ✅ Found invite on attempt ${attempt + 1}")
-                        return@repeat
+                    try {
+                        firebaseInvite = FirebaseManager.getInvite(inviteId)
+                        if (firebaseInvite != null) {
+                            Log.d(TAG, "   ✅ Found invite!")
+                            return@repeat
+                        }
+                    } catch (e: Exception) {
+                        Log.w(TAG, "   ⚠️ Attempt ${attempt + 1} failed: ${e.message}")
                     }
-                    if (attempt < 2) delay(1500) // Warten zwischen Versuchen
+                    if (attempt < 2) delay(1500)
                 }
 
                 if (firebaseInvite == null) {
-                    Log.e(TAG, "❌ Invite not found after 3 attempts")
+                    Log.e(TAG, "❌ Could not load invite after 3 attempts")
                     Toast.makeText(
                         this@InviteAcceptActivity,
                         "Einladung nicht gefunden. Bitte versuche es erneut.",
@@ -66,12 +74,10 @@ class InviteAcceptActivity : AppCompatActivity() {
                     return@launch
                 }
 
-                Log.d(TAG, "✅ Invite loaded:")
-                Log.d(TAG, "   Creator: ${firebaseInvite!!.creatorName}")
-                Log.d(TAG, "   Acceptor: ${firebaseInvite!!.acceptorName}")
+                Log.d(TAG, "📋 Invite details:")
+                Log.d(TAG, "   Creator: ${firebaseInvite!!.creatorName} (${firebaseInvite!!.creatorUserId})")
                 Log.d(TAG, "   Accepted: ${firebaseInvite!!.accepted}")
 
-                // Prüfen ob bereits angenommen
                 if (firebaseInvite!!.accepted) {
                     Log.w(TAG, "⚠️ Invite already accepted")
                     Toast.makeText(
@@ -83,11 +89,11 @@ class InviteAcceptActivity : AppCompatActivity() {
                     return@launch
                 }
 
-                // Einladung ist gültig - Namen abfragen
-                showNameInputDialog(inviteId, firebaseInvite!!.creatorName)
+                showNameInputDialog(inviteId, firebaseInvite!!)
 
             } catch (e: Exception) {
                 Log.e(TAG, "❌ Error loading invite", e)
+                Log.e(TAG, "   Message: ${e.message}")
                 Toast.makeText(
                     this@InviteAcceptActivity,
                     "Fehler beim Laden: ${e.message}",
@@ -98,43 +104,34 @@ class InviteAcceptActivity : AppCompatActivity() {
         }
     }
 
-    private fun showNameInputDialog(inviteId: String, creatorName: String) {
-        Log.d(TAG, "📝 Showing name input dialog")
-
+    private fun showNameInputDialog(inviteId: String, invite: PartnerInvite) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_two_names, null)
         val myNameInput: EditText = dialogView.findViewById(R.id.myNameInput)
 
         AlertDialog.Builder(this)
-            .setTitle("Einladung von $creatorName")
+            .setTitle("Einladung von ${invite.creatorName}")
             .setMessage("Wie heißt du?")
             .setView(dialogView)
             .setCancelable(false)
-            .setPositiveButton(getString(R.string.invite_accept_button)) { dialog, _ ->
+            .setPositiveButton("Annehmen") { dialog, _ ->
                 val myName = myNameInput.text.toString().trim().ifBlank { "Partner" }
-
-                Log.d(TAG, "✅ Name entered: $myName")
-
-                // Meinen Namen SOFORT speichern
                 PartnerNameHelper.setMyName(this, myName)
-                Log.d(TAG, "✅ My name saved locally: $myName")
-
                 dialog.dismiss()
-                acceptInvite(inviteId, myName, creatorName)
+                acceptInvite(inviteId, myName, invite)
             }
-            .setNegativeButton(getString(R.string.invite_cancel_button)) { _, _ ->
-                Log.d(TAG, "❌ User cancelled invite")
+            .setNegativeButton("Abbrechen") { _, _ ->
                 finish()
             }
             .show()
     }
 
-    private fun acceptInvite(inviteId: String, myName: String, creatorName: String) {
+    private fun acceptInvite(inviteId: String, myName: String, invite: PartnerInvite) {
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         Log.d(TAG, "✅ Accepting invite")
-        Log.d(TAG, "   Invite ID: $inviteId")
-        Log.d(TAG, "   My name (acceptor): $myName")
-        Log.d(TAG, "   Creator name: $creatorName")
-        Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        Log.d(TAG, "   My name: $myName")
+        Log.d(TAG, "   My User-ID: $myUserId")
+        Log.d(TAG, "   Creator name: ${invite.creatorName}")
+        Log.d(TAG, "   Creator User-ID: ${invite.creatorUserId}")
 
         Toast.makeText(this, "Einladung wird angenommen...", Toast.LENGTH_SHORT).show()
 
@@ -142,43 +139,91 @@ class InviteAcceptActivity : AppCompatActivity() {
             try {
                 val db = AppDatabase.getDatabase(this@InviteAcceptActivity)
 
-                // Schritt 1: In Firebase aktualisieren
-                Log.d(TAG, "🔄 Updating Firebase...")
-                FirebaseManager.updateInviteAccept(inviteId, myName, true)
-                Log.d(TAG, "✅ Firebase updated")
-
-                // Kurz warten um sicherzustellen dass Update durchging
-                delay(500)
-
-                // Schritt 2: Lokal speichern
-                Log.d(TAG, "🔄 Saving locally...")
-                val invite = PartnerInvite(
-                    inviteId = inviteId,
-                    creatorName = creatorName,
+                // Schritt 1: Invite lokal speichern
+                Log.d(TAG, "💾 Saving invite locally...")
+                val acceptedInvite = invite.copy(
                     acceptorName = myName,
+                    acceptorUserId = myUserId,
                     accepted = true
                 )
-                db.partnerInviteDao().insert(invite)
-                Log.d(TAG, "✅ Saved locally")
+                db.partnerInviteDao().insert(acceptedInvite)
+                Log.d(TAG, "✅ Invite saved locally")
 
-                // Schritt 3: Verifizieren
-                val savedLocally = db.partnerInviteDao().getInviteById(inviteId)
-                Log.d(TAG, "🔍 Local verification:")
-                Log.d(TAG, "   Creator: ${savedLocally?.creatorName}")
-                Log.d(TAG, "   Acceptor: ${savedLocally?.acceptorName}")
-                Log.d(TAG, "   Accepted: ${savedLocally?.accepted}")
+                // Schritt 2: Partnership erstellen
+                val partnershipId = inviteId  // Verwende invite-ID als partnership-ID!
+
+                Log.d(TAG, "💑 Creating partnership...")
+                Log.d(TAG, "   Partnership ID: $partnershipId")
+
+                // Partnership für MICH (Acceptor)
+                val myPartnership = Partnership(
+                    partnershipId = partnershipId,
+                    myUserId = myUserId,
+                    partnerUserId = invite.creatorUserId,
+                    myName = myName,
+                    partnerName = invite.creatorName,
+                    active = true
+                )
+
+                // Partnership für CREATOR (damit beide es sehen!)
+                val creatorPartnership = Partnership(
+                    partnershipId = partnershipId,
+                    myUserId = invite.creatorUserId,
+                    partnerUserId = myUserId,
+                    myName = invite.creatorName,
+                    partnerName = myName,
+                    active = true
+                )
+
+                // Lokal speichern
+                Log.d(TAG, "💾 Saving my partnership locally...")
+                db.partnershipDao().insert(myPartnership)
+                Log.d(TAG, "✅ My partnership saved locally")
+
+                // Firebase: Beide Partnerships speichern
+                try {
+                    Log.d(TAG, "☁️ Saving partnerships to Firebase...")
+
+                    // Meine Partnership
+                    FirebaseManager.database.child("partnerships")
+                        .child(myUserId)
+                        .child(partnershipId)
+                        .setValue(myPartnership)
+                        .await()
+
+                    // Creator's Partnership
+                    FirebaseManager.database.child("partnerships")
+                        .child(invite.creatorUserId)
+                        .child(partnershipId)
+                        .setValue(creatorPartnership)
+                        .await()
+
+                    Log.d(TAG, "✅ Partnerships saved to Firebase")
+                } catch (e: Exception) {
+                    Log.w(TAG, "⚠️ Firebase save failed (but continuing): ${e.message}")
+                }
+
+                // Schritt 3: Invite in Firebase akzeptieren
+                try {
+                    Log.d(TAG, "☁️ Updating invite in Firebase...")
+                    FirebaseManager.updateInviteAccept(inviteId, myName, myUserId, true)
+                    Log.d(TAG, "✅ Invite updated in Firebase")
+                } catch (e: Exception) {
+                    Log.w(TAG, "⚠️ Firebase invite update failed (but continuing): ${e.message}")
+                }
+
+                delay(500)  // Kurz warten für Firebase-Sync
 
                 Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-                Log.d(TAG, "✅✅✅ INVITE ACCEPTED SUCCESSFULLY ✅✅✅")
+                Log.d(TAG, "✅✅✅ PARTNERSHIP CREATED ✅✅✅")
                 Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
                 Toast.makeText(
                     this@InviteAcceptActivity,
-                    "Verbunden mit $creatorName! 💕",
+                    "Verbunden mit ${invite.creatorName}! 💕",
                     Toast.LENGTH_LONG
                 ).show()
 
-                // Zur MainActivity
                 val intent = Intent(this@InviteAcceptActivity, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
