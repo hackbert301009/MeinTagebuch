@@ -12,6 +12,7 @@ import java.util.*
 import android.content.Context
 import android.content.res.Configuration
 import android.widget.ImageView
+import my.love.meintagebuch.StatisticsActivity
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {

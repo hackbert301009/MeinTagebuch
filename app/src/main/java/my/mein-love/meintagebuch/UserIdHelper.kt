@@ -1,4 +1,3 @@
-package com.example.meintagebuch
 
 import android.content.Context
 import java.util.UUID

@@ -86,7 +86,7 @@
 
         <!-- Statistics Activity -->
         <activity
-            android:name=".StatisticsActivity"
+            android:name="my.love.meintagebuch.StatisticsActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
 
@@ -103,7 +103,7 @@
             android:parentActivityName=".MainActivity" />
 
         <activity
-        android:name=".HilfeActivity"
+        android:name="my.love.meintagebuch.HilfeActivity"
         android:exported="false"/>
 
         <activity

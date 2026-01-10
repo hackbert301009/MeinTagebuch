@@ -1,4 +1,3 @@
-package com.example.meintagebuch
 
 import androidx.lifecycle.LiveData
 import androidx.room.*

@@ -1,9 +1,11 @@
-package com.example.meintagebuch
+package my.love.meintagebuch
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import com.example.meintagebuch.R
 import com.google.android.material.card.MaterialCardView
 
 class HilfeActivity : AppCompatActivity() {
@@ -13,7 +15,7 @@ class HilfeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_hilfe)
 
         // Toolbar Setup
-        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Hilfe & Unterstützung"
@@ -40,7 +42,6 @@ class HilfeActivity : AppCompatActivity() {
             openWebsite("https://hackbert.org/kontakt")
         }
     }
-
     private fun openPhone(phoneNumber: String) {
         val intent = Intent(Intent.ACTION_DIAL).apply {
             data = Uri.parse("tel:$phoneNumber")
@@ -54,7 +55,6 @@ class HilfeActivity : AppCompatActivity() {
         }
         startActivity(intent)
     }
-
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true

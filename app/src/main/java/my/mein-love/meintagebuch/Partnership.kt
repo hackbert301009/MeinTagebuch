@@ -1,4 +1,3 @@
-package com.example.meintagebuch
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

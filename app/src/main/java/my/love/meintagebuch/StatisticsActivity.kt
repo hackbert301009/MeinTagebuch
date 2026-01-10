@@ -1,13 +1,19 @@
-package com.example.meintagebuch
+package my.love.meintagebuch
 
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.meintagebuch.AppDatabase
+import com.example.meintagebuch.DayStatistic
+import com.example.meintagebuch.R
+import com.example.meintagebuch.StatisticsAdapter
 import com.google.android.material.appbar.MaterialToolbar
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class StatisticsActivity : AppCompatActivity() {
 
@@ -19,7 +25,7 @@ class StatisticsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_statistics)
 
-        database = AppDatabase.getDatabase(this)
+        database = AppDatabase.Companion.getDatabase(this)
 
         val toolbar: MaterialToolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
